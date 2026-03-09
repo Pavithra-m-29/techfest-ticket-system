@@ -3,6 +3,7 @@ import sqlite3, qrcode, os, time
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 from blockchain import blockchain
 
 app = Flask(__name__)
@@ -14,35 +15,16 @@ GMAIL_ADDRESS  = "pavithramadhan7@gmail.com"       # ← உங்கள் Gmai
 GMAIL_PASSWORD = "tpxt rawb sgkp fnio"  # ← 16-digit App Password
 
 # ============================================================
-#  EMAIL SEND FUNCTION
+#  EMAIL SEND FUNCTION (QR code inline image)
 # ============================================================
-def send_email(to_email, name, ticket_id):
+def send_email(to_email, name, ticket_id, qr_path):
     try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = f"🎫 TechFest 2025 — Your Ticket is Booked! #{ticket_id}"
+        msg = MIMEMultipart("related")
+        msg["Subject"] = f"TechFest 2025 - Your Ticket is Booked! #{ticket_id}"
         msg["From"]    = GMAIL_ADDRESS
         msg["To"]      = to_email
 
-        # Plain text version
-        text = f"""
-Hi {name}!
-
-Your TechFest 2025 ticket has been booked successfully! 🎉
-
-Ticket ID : #{ticket_id}
-Event     : TechFest 2025
-Date      : December 25, 2025
-Venue     : Chennai
-
-Show your QR code at the entry gate.
-Enjoy your moment! 🎊
-
-— TechFest 2025 Team
-        """
-
-        # HTML version (nice looking email)
         html = f"""
-<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8"/>
@@ -52,35 +34,41 @@ Enjoy your moment! 🎊
   .header {{ background: #1a1410; padding: 32px; text-align: center; }}
   .header h1 {{ font-size: 36px; color: #e8401c; margin: 0; letter-spacing: 3px; }}
   .header p {{ color: #8a7f72; font-size: 13px; margin: 6px 0 0; }}
-  .body {{ padding: 28px; }}
+  .body {{ padding: 28px; text-align: center; }}
   .greeting {{ font-size: 18px; font-weight: 700; color: #1a1410; margin-bottom: 8px; }}
   .msg {{ font-size: 14px; color: #555; margin-bottom: 24px; line-height: 1.6; }}
   .ticket-box {{ background: #f5f0e8; border: 2px dashed #e0d8cc; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px; }}
   .ticket-label {{ font-size: 11px; color: #8a7f72; text-transform: uppercase; letter-spacing: 1px; }}
   .ticket-id {{ font-size: 32px; font-weight: 800; color: #e8401c; letter-spacing: 2px; margin: 6px 0; }}
-  .info-row {{ display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px dashed #e0d8cc; }}
+  .qr-box {{ background: #fff; border: 2px solid #e0d8cc; border-radius: 12px; padding: 20px; display: inline-block; margin: 16px 0; }}
+  .qr-box img {{ width: 200px; height: 200px; display: block; }}
+  .info-row {{ display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px dashed #e0d8cc; text-align: left; }}
   .info-row:last-child {{ border-bottom: none; }}
   .info-key {{ color: #8a7f72; }}
   .info-val {{ font-weight: 600; color: #1a1410; }}
   .footer {{ background: #1a1410; padding: 16px; text-align: center; font-size: 12px; color: #6b6b6b; }}
-  .emoji {{ font-size: 48px; margin-bottom: 8px; display: block; }}
 </style>
 </head>
 <body>
 <div class="card">
   <div class="header">
     <h1>TECHFEST</h1>
-    <p>2025 · Chennai · December 25</p>
+    <p>2025 &middot; Chennai &middot; December 25</p>
   </div>
   <div class="body">
-    <span class="emoji">🎉</span>
+    <div style="font-size:48px;margin-bottom:8px">&#127881;</div>
     <div class="greeting">Hi {name}!</div>
-    <div class="msg">Your ticket has been booked successfully. Show the QR code at the entry gate to get in!</div>
+    <div class="msg">Your ticket has been booked successfully!<br>Show this QR code at the entry gate.</div>
 
     <div class="ticket-box">
       <div class="ticket-label">Your Ticket ID</div>
       <div class="ticket-id">#{ticket_id}</div>
-      <div class="ticket-label">Show QR at entry gate</div>
+    </div>
+
+    <div class="qr-box">
+      <div class="ticket-label" style="margin-bottom:12px">Scan at Entry Gate</div>
+      <img src="cid:qrcode" alt="QR Code"/>
+      <div class="ticket-label" style="margin-top:8px">Ticket #{ticket_id}</div>
     </div>
 
     <div class="info-row">
@@ -97,26 +85,32 @@ Enjoy your moment! 🎊
     </div>
     <div class="info-row">
       <span class="info-key">Status</span>
-      <span class="info-val" style="color:#1a8a4a">✅ Confirmed</span>
+      <span class="info-val" style="color:#1a8a4a">&#10003; Confirmed</span>
     </div>
   </div>
   <div class="footer">
-    TechFest 2025 · Powered by TicketSys<br>
-    Enjoy your moment! 🎊
+    TechFest 2025 &middot; Powered by TicketSys<br>
+    Enjoy your moment! &#127882;
   </div>
 </div>
 </body>
 </html>
         """
 
-        msg.attach(MIMEText(text, "plain"))
         msg.attach(MIMEText(html, "html"))
+
+        # QR code as inline image
+        with open(qr_path, "rb") as f:
+            qr_img = MIMEImage(f.read())
+            qr_img.add_header("Content-ID", "<qrcode>")
+            qr_img.add_header("Content-Disposition", "inline", filename="ticket_qr.png")
+            msg.attach(qr_img)
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(GMAIL_ADDRESS, GMAIL_PASSWORD)
             server.sendmail(GMAIL_ADDRESS, to_email, msg.as_string())
 
-        print(f"✅ Email sent to {to_email}")
+        print(f"✅ Email with QR sent to {to_email}")
 
     except Exception as e:
         print(f"❌ Email error: {e}")
@@ -180,9 +174,9 @@ def book():
     # Blockchain
     blockchain.create_block({"ticket_id": ticket_id, "name": name})
 
-    # ✅ Email Notification
+    # Email with QR code
     if email and "@" in email:
-        send_email(email, name, ticket_id)
+        send_email(email, name, ticket_id, qr_path)
 
     return render_template("ticket.html",
                            ticket_id=ticket_id,

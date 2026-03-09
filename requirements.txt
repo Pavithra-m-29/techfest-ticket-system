@@ -1,5 +1,4 @@
 flask
-qrcode
-pillow
-opencv-python
-pyzbar
+qrcode[pil]
+gunicorn
+requests
