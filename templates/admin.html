@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TechFest 2025 — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0a0a0f; --surface:#12121a; --surface2:#1a1a26;
+  --border:#2a2a3d; --accent:#7c5cfc; --accent2:#fc5c7d;
+  --green:#2ecc71; --yellow:#f9ca24; --red:#fc5c7d;
+  --text:#e8e8f0; --muted:#6b6b88;
+  --font:'Syne',sans-serif; --mono:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+
+/* LOGIN */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(124,92,252,0.15) 0%,transparent 70%);
+}
+.login-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:40px;width:360px;text-align:center;
+  animation:fadeUp 0.5s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.login-icon{font-size:42px;margin-bottom:12px;}
+.login-title{font-size:24px;font-weight:800;letter-spacing:-1px;margin-bottom:4px;}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.inp{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;transition:border-color 0.2s;margin-bottom:12px;}
+.inp:focus{border-color:var(--accent);}
+.btn-login{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:15px;cursor:pointer;transition:all 0.2s;}
+.btn-login:hover{background:#6a4de8;transform:translateY(-1px);}
+.login-err{color:var(--red);font-size:13px;margin-top:10px;display:none;}
+
+/* DASHBOARD */
+#dashboard{display:none;}
+.layout{display:flex;}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 0;position:fixed;height:100vh;z-index:10;}
+.logo{padding:0 24px 28px;border-bottom:1px solid var(--border);}
+.logo-icon{font-size:22px;}
+.logo-text{font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-top:4px;}
+.logo-sub{font-size:11px;color:var(--muted);font-family:var(--mono);}
+.nav{padding:20px 12px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--accent);color:#fff;}
+.icon{font-size:16px;width:20px;text-align:center;}
+.sidebar-footer{padding:16px 24px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);font-family:var(--mono);}
+.btn-logout{margin:0 12px;padding:8px 12px;background:rgba(252,92,125,0.1);color:var(--red);border:1px solid rgba(252,92,125,0.3);border-radius:8px;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;width:calc(100% - 24px);}
+.btn-logout:hover{background:var(--red);color:#fff;}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;padding:32px;overflow-y:auto;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.page-title{font-size:26px;font-weight:800;letter-spacing:-1px;}
+.page-title span{color:var(--accent);}
+.badge-live{background:rgba(46,204,113,0.15);color:var(--green);border:1px solid rgba(46,204,113,0.3);padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--mono);display:flex;align-items:center;gap:6px;}
+.badge-live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:transform 0.2s,border-color 0.2s;}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.c1::before{background:var(--yellow);}
+.stat-card.c2::before{background:var(--accent);}
+.stat-card.c3::before{background:var(--green);}
+.stat-card.c4::before{background:var(--red);}
+.stat-label{font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;}
+.stat-num{font-size:38px;font-weight:800;letter-spacing:-2px;margin:6px 0 2px;}
+.stat-sub{font-size:12px;color:var(--muted);}
+.stat-icon{position:absolute;right:18px;top:18px;font-size:28px;opacity:0.15;}
+
+/* PANEL */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}
+.panel-body{padding:16px 20px;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{text-align:left;padding:8px 12px;color:var(--muted);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 12px;border-bottom:1px solid rgba(42,42,61,0.5);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--surface2);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--mono);font-weight:500;}
+.badge.valid {background:rgba(46,204,113,0.1);color:var(--green);border:1px solid rgba(46,204,113,0.2);}
+.badge.used  {background:rgba(124,92,252,0.1);color:var(--accent);border:1px solid rgba(124,92,252,0.2);}
+.badge.fake  {background:rgba(252,92,125,0.1);color:var(--red);border:1px solid rgba(252,92,125,0.2);}
+.badge.sold1 {background:rgba(46,204,113,0.1);color:var(--green);border:1px solid rgba(46,204,113,0.2);}
+.badge.sold0 {background:rgba(252,92,125,0.1);color:var(--red);border:1px solid rgba(252,92,125,0.2);}
+
+/* VERIFY */
+.verify-row{display:flex;gap:10px;margin-bottom:16px;}
+.v-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color 0.2s;}
+.v-input:focus{border-color:var(--accent);}
+.btn{padding:10px 20px;border-radius:8px;border:none;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.btn-p{background:var(--accent);color:#fff;}.btn-p:hover{background:#6a4de8;}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.result-box{background:var(--surface2);border-radius:10px;padding:14px 16px;display:none;font-family:var(--mono);font-size:13px;margin-top:12px;}
+.result-box.show{display:block;}
+.r-icon{font-size:24px;margin-bottom:6px;}
+.r-msg{font-weight:600;font-size:14px;margin-bottom:4px;}
+.r-detail{color:var(--muted);font-size:12px;}
+
+.mono{font-family:var(--mono);}
+.empty-msg{color:var(--muted);font-family:var(--mono);font-size:13px;padding:20px;text-align:center;}
+
+.sec{display:none;animation:fadeUp 0.3s ease both;}
+.sec.active{display:block;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Admin Login</div>
+    <div class="login-sub">TechFest 2025 Dashboard</div>
+    <input class="inp" type="text" id="l-user" placeholder="Username" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <input class="inp" type="password" id="l-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="btn-login" onclick="doLogin()">LOGIN</button>
+    <div class="login-err" id="l-err">❌ Wrong credentials</div>
+    <div style="margin-top:16px;font-size:11px;color:var(--muted);font-family:var(--mono)">Default: admin / admin123</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">🎫</div>
+      <div class="logo-text">TicketSys</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-item active" onclick="showSec('overview')"><span class="icon">📊</span> Overview</div>
+      <div class="nav-item" onclick="showSec('tickets')"><span class="icon">🎟️</span> All Tickets</div>
+      <div class="nav-item" onclick="showSec('verify')"><span class="icon">🔍</span> Verify</div>
+      <div class="nav-item" onclick="showSec('fakes')"><span class="icon">🚨</span> Fake Alerts</div>
+    </nav>
+    <button class="btn-logout" onclick="doLogout()">🚪 Logout</button>
+    <div class="sidebar-footer">Event: TechFest 2025<br>25 Dec 2025</div>
+  </aside>
+
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="sec active" id="sec-overview">
+      <div class="topbar">
+        <div class="page-title">Admin <span>Dashboard</span></div>
+        <div class="badge-live">LIVE</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card c1">
+          <div class="stat-icon">🎫</div>
+          <div class="stat-label">Total Tickets</div>
+          <div class="stat-num">{{ total }}</div>
+          <div class="stat-sub">Generated</div>
+        </div>
+        <div class="stat-card c2">
+          <div class="stat-icon">💳</div>
+          <div class="stat-label">Sold Online</div>
+          <div class="stat-num">{{ total - not_used if total else 0 }}</div>
+          <div class="stat-sub">sold=1</div>
+        </div>
+        <div class="stat-card c3">
+          <div class="stat-icon">🚪</div>
+          <div class="stat-label">Entered</div>
+          <div class="stat-num">{{ used }}</div>
+          <div class="stat-sub">Used tickets</div>
+        </div>
+        <div class="stat-card c4">
+          <div class="stat-icon">🚨</div>
+          <div class="stat-label">Fake Attempts</div>
+          <div class="stat-num">{{ fake_count }}</div>
+          <div class="stat-sub">Invalid scans</div>
+        </div>
+      </div>
+
+      <!-- RECENT TICKETS TABLE -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🕐 Recent Bookings</div>
+          <span style="font-size:12px;color:var(--muted);font-family:var(--mono)">Latest 8</span>
+        </div>
+        <div style="padding:0">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Sold</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if tickets %}
+                {% for t in tickets[:8] %}
+                <tr>
+                  <td class="mono" style="color:var(--accent)">#{{ t[0] }}</td>
+                  <td>{{ t[1] or '—' }}</td>
+                  <td>
+                    {% if t[3] == 1 %}
+                      <span class="badge used">Used ✓</span>
+                    {% else %}
+                      <span class="badge valid">Valid</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if t[2] == 1 %}
+                      <span class="badge sold1">sold=1 ✅</span>
+                    {% else %}
+                      <span class="badge sold0">sold=0</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if t[3] == 0 %}
+                      <a href="/mark_used/{{ t[0] }}"><button class="btn btn-p btn-sm">Mark Used</button></a>
+                    {% else %}
+                      <span style="color:var(--muted);font-size:12px">Done</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr><td colspan="5" class="empty-msg">No tickets yet</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL TICKETS -->
+    <div class="sec" id="sec-tickets">
+      <div class="topbar"><div class="page-title">All <span>Tickets</span></div></div>
+      <div class="panel">
+        <div style="padding:0">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Sold</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if tickets %}
+                {% for t in tickets %}
+                <tr>
+                  <td class="mono" style="color:var(--accent)">#{{ t[0] }}</td>
+                  <td>{{ t[1] or '—' }}</td>
+                  <td>
+                    {% if t[3] == 1 %}
+                      <span class="badge used">Used ✓</span>
+                    {% else %}
+                      <span class="badge valid">Valid</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if t[2] == 1 %}
+                      <span class="badge sold1">sold=1 ✅</span>
+                    {% else %}
+                      <span class="badge sold0">sold=0</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if t[3] == 0 %}
+                      <a href="/mark_used/{{ t[0] }}"><button class="btn btn-p btn-sm">Mark Used</button></a>
+                    {% else %}
+                      <span style="color:var(--muted);font-size:12px">Done</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr><td colspan="5" class="empty-msg">No tickets yet</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERIFY -->
+    <div class="sec" id="sec-verify">
+      <div class="topbar"><div class="page-title">🔍 Verify <span>Ticket</span></div></div>
+      <div class="panel" style="max-width:520px">
+        <div class="panel-header"><div class="panel-title">Manual Ticket Verify</div></div>
+        <div class="panel-body">
+          <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:7px">TICKET ID (number only, e.g. 5)</div>
+          <div class="verify-row">
+            <input class="v-input" id="v-input" placeholder="e.g. 5" onkeydown="if(event.key==='Enter')doVerify()"/>
+            <button class="btn btn-p" onclick="doVerify()">Verify</button>
+          </div>
+          <div class="result-box" id="v-result">
+            <div class="r-icon" id="v-icon"></div>
+            <div class="r-msg" id="v-msg"></div>
+            <div class="r-detail" id="v-detail"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAKE ALERTS -->
+    <div class="sec" id="sec-fakes">
+      <div class="topbar"><div class="page-title">🚨 Fake <span>Alerts</span></div></div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Invalid Scan Log</div>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--red)">{{ fake_count }} attempts</span>
+        </div>
+        <div style="padding:0">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Reason</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if fakes %}
+                {% for f in fakes %}
+                <tr>
+                  <td class="mono" style="color:var(--red)">{{ f[0] }}</td>
+                  <td style="font-size:12px;color:var(--muted)">{{ f[1] }}</td>
+                  <td class="mono" style="font-size:11px;color:var(--muted)">{{ f[2] }}</td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr><td colspan="3" class="empty-msg">No fake attempts 🎉</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<script>
+// ====== AUTH ======
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'admin123';
+
+function doLogin() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value.trim();
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  } else {
+    const err = document.getElementById('l-err');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
+});
+
+// ====== VERIFY via Flask /verify_qr ======
+async function doVerify() {
+  const val = document.getElementById('v-input').value.trim();
+  if (!val) return;
+  const box = document.getElementById('v-result');
+  box.classList.add('show');
+  document.getElementById('v-icon').textContent = '⏳';
+  document.getElementById('v-msg').innerHTML = 'Checking...';
+  document.getElementById('v-detail').textContent = '';
+
+  try {
+    // Build token like Flask expects: "id-timestamp" or just "id"
+    const token = val.includes('-') ? val : val + '-0';
+    const res = await fetch('/verify_qr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket: token })
+    });
+    const data = await res.json();
+    const result = data.result;
+
+    if (result === 'Entry Allowed') {
+      document.getElementById('v-icon').textContent = '✅';
+      document.getElementById('v-msg').innerHTML = '<span style="color:var(--green)">Entry Allowed!</span>';
+      document.getElementById('v-detail').textContent = `Ticket #${val} is valid.`;
+    } else if (result === 'Ticket Already Used') {
+      document.getElementById('v-icon').textContent = '⚠️';
+      document.getElementById('v-msg').innerHTML = '<span style="color:var(--yellow)">Already Used!</span>';
+      document.getElementById('v-detail').textContent = `Ticket #${val} was already scanned.`;
+    } else {
+      document.getElementById('v-icon').textContent = '❌';
+      document.getElementById('v-msg').innerHTML = '<span style="color:var(--red)">Fake / Not Found!</span>';
+      document.getElementById('v-detail').textContent = `Ticket #${val} does not exist.`;
+    }
+  } catch(e) {
+    document.getElementById('v-icon').textContent = '⚠️';
+    document.getElementById('v-msg').innerHTML = 'Error';
+    document.getElementById('v-detail').textContent = e.message;
+  }
+}
+
+// ====== NAV ======
+const SECS = ['overview','tickets','verify','fakes'];
+function showSec(name) {
+  SECS.forEach(s => {
+    document.getElementById('sec-'+s).classList.toggle('active', s===name);
+  });
+  document.querySelectorAll('.nav-item').forEach((el,i) => {
+    el.classList.toggle('active', SECS[i]===name);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TechFest 2025 — Book Your Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#f5f0e8; --ink:#1a1410; --accent:#e8401c;
+  --surface:#fff; --muted:#8a7f72; --border:#e0d8cc;
+  --font-display:'Bebas Neue',cursive; --font-body:'Outfit',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:var(--font-body);color:var(--ink);min-height:100vh;}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.4;
+}
+.container{max-width:520px;margin:0 auto;padding:32px 20px;position:relative;z-index:1;}
+
+/* HERO */
+.hero{text-align:center;padding:48px 0 36px;}
+.hero-tag{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:2px;margin-bottom:16px;}
+.hero-title{font-family:var(--font-display);font-size:clamp(56px,14vw,88px);line-height:0.92;letter-spacing:2px;}
+.hero-title span{color:var(--accent);}
+.hero-date{margin-top:14px;font-size:14px;color:var(--muted);letter-spacing:1px;font-weight:500;}
+.hero-divider{width:60px;height:3px;background:var(--accent);margin:20px auto 0;}
+.price-row{display:flex;justify-content:center;margin:28px 0;}
+.price-badge{background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:4px;text-align:center;}
+.price-label{font-size:11px;letter-spacing:1px;opacity:0.6;}
+.price-num{font-family:var(--font-display);font-size:32px;letter-spacing:1px;}
+
+/* CHOOSE */
+.choose-title{font-family:var(--font-display);font-size:22px;letter-spacing:1px;margin-bottom:14px;text-align:center;color:var(--muted);}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
+.option-card{
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:14px;padding:24px 16px;text-align:center;
+  cursor:pointer;transition:all 0.2s;
+}
+.option-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,64,28,0.12);}
+.option-icon{font-size:36px;margin-bottom:10px;}
+.option-title{font-family:var(--font-display);font-size:20px;letter-spacing:1px;margin-bottom:4px;}
+.option-sub{font-size:12px;color:var(--muted);}
+
+/* FORM */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 40px rgba(0,0,0,0.06);animation:slideUp 0.4s ease both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.form-title{font-family:var(--font-display);font-size:28px;letter-spacing:1px;margin-bottom:4px;}
+.form-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.field input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--font-body);font-size:15px;color:var(--ink);background:var(--bg);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,64,28,0.1);}
+.field input::placeholder{color:#bbb;}
+.btn-book{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--font-display);font-size:22px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;margin-top:8px;}
+.btn-book:hover{background:#c93516;transform:translateY(-1px);box-shadow:0 8px 24px rgba(232,64,28,0.3);}
+
+/* SELLER */
+.seller-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 40px rgba(0,0,0,0.06);text-align:center;animation:slideUp 0.4s ease both;}
+.seller-icon{font-size:56px;margin-bottom:12px;}
+.seller-title{font-family:var(--font-display);font-size:28px;letter-spacing:1px;margin-bottom:8px;}
+.seller-desc{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.seller-steps{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px 20px;text-align:left;margin-bottom:20px;}
+.step-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;font-size:14px;line-height:1.5;}
+.step-row:last-child{margin-bottom:0;}
+.step-num{background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.btn-seller{display:block;width:100%;padding:16px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;font-family:var(--font-display);font-size:22px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.btn-seller:hover{background:#333;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;font-family:var(--font-body);font-size:14px;color:var(--muted);margin-bottom:16px;padding:0;transition:color 0.2s;}
+.back-btn:hover{color:var(--ink);}
+
+.footer{text-align:center;padding:32px 0 16px;font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">🎉 Limited Seats Available</div>
+    <div class="hero-title">TECH<br><span>FEST</span><br>2025</div>
+    <div class="hero-date">📅 December 25, 2025 &nbsp;·&nbsp; 📍 Chennai</div>
+    <div class="hero-divider"></div>
+  </div>
+
+  <div class="price-row">
+    <div class="price-badge">
+      <div class="price-label">Entry Ticket</div>
+      <div class="price-num">FREE</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: CHOOSE -->
+  <div id="step-choose">
+    <div class="choose-title">Choose how to get your ticket</div>
+    <div class="options-grid">
+      <div class="option-card" onclick="showOnline()">
+        <div class="option-icon">🌐</div>
+        <div class="option-title">Book Online</div>
+        <div class="option-sub">Buy directly from system</div>
+      </div>
+      <div class="option-card" onclick="showSeller()">
+        <div class="option-icon">🤝</div>
+        <div class="option-title">Buy from Seller</div>
+        <div class="option-sub">Scan QR to verify before buying</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2A: ONLINE BOOKING -->
+  <div id="step-online" style="display:none">
+    <button class="back-btn" onclick="showChoose()">← Back</button>
+    <div class="form-card">
+      <div class="form-title">🌐 Book Online</div>
+      <div class="form-sub">Fill the form — ticket & QR generated instantly</div>
+      <form method="POST" action="/book">
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" name="name" placeholder="Enter your name" required/>
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="9876543210" maxlength="10"/>
+        </div>
+        <div class="field">
+          <label>Email (Optional)</label>
+          <input type="email" name="email" placeholder="you@email.com"/>
+        </div>
+        <div class="field">
+          <label>College / Organization</label>
+          <input type="text" name="org" placeholder="Your college or company"/>
+        </div>
+        <button type="submit" class="btn-book">BOOK NOW →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- STEP 2B: BUY FROM SELLER -->
+  <div id="step-seller" style="display:none">
+    <button class="back-btn" onclick="showChoose()">← Back</button>
+    <div class="seller-card">
+      <div class="seller-icon">🤝</div>
+      <div class="seller-title">Buy from Seller</div>
+      <div class="seller-desc">Seller-கிட்ட வாங்குறதுக்கு முன்னாடி ticket verify பண்ணுங்க — fake ticket வாங்காம இருக்க!</div>
+      <div class="seller-steps">
+        <div class="step-row">
+          <div class="step-num">1</div>
+          <div>Seller-கிட்ட ticket QR காட்டச் சொல்லுங்க</div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">2</div>
+          <div>கீழே உள்ள Scanner-ல QR scan பண்ணுங்க</div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">3</div>
+          <div>
+            <strong style="color:#1a8a4a">✅ ORIGINAL</strong> வந்தா — Safe to buy!<br>
+            <strong style="color:#c93516">❌ FAKE / ALREADY SOLD</strong> வந்தா — வாங்காதீங்க!
+          </div>
+        </div>
+      </div>
+      <a href="/buy_from_seller" class="btn-seller">📷 OPEN SCANNER →</a>
+    </div>
+  </div>
+
+  <div class="footer">TechFest 2025 · Powered by TicketSys</div>
+</div>
+
+<script>
+function showChoose() {
+  document.getElementById('step-choose').style.display = 'block';
+  document.getElementById('step-online').style.display = 'none';
+  document.getElementById('step-seller').style.display = 'none';
+}
+function showOnline() {
+  document.getElementById('step-choose').style.display = 'none';
+  document.getElementById('step-online').style.display = 'block';
+  document.getElementById('step-seller').style.display = 'none';
+}
+function showSeller() {
+  document.getElementById('step-choose').style.display = 'none';
+  document.getElementById('step-online').style.display = 'none';
+  document.getElementById('step-seller').style.display = 'block';
+}
+</script>
+</body>
+</html>

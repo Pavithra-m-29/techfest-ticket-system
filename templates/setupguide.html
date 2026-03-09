@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Setup Guide — TechFest Ticket System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f8f6f1;--ink:#1a1410;--accent:#e8401c;--green:#1a8a4a;--surface:#fff;--border:#e0d8cc;--muted:#8a7f72;--font:'Syne',sans-serif;--mono:'DM Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);padding:40px 20px;}
+.container{max-width:700px;margin:0 auto;}
+h1{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:6px;}
+h1 span{color:var(--accent);}
+.subtitle{color:var(--muted);font-size:14px;margin-bottom:40px;}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;position:relative;}
+.step-num{
+  position:absolute;top:-16px;left:24px;
+  background:var(--accent);color:#fff;
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:15px;
+}
+.step-title{font-size:18px;font-weight:700;margin-bottom:12px;}
+.step p{font-size:14px;line-height:1.7;color:#444;margin-bottom:10px;}
+.step ul{padding-left:20px;font-size:14px;line-height:2;color:#444;}
+.step ul li{margin-bottom:4px;}
+code{
+  background:#f0ece3;border:1px solid var(--border);
+  border-radius:6px;padding:2px 8px;
+  font-family:var(--mono);font-size:13px;color:var(--accent);
+}
+.code-block{
+  background:#1a1410;color:#f5f0e8;
+  border-radius:10px;padding:16px 20px;
+  font-family:var(--mono);font-size:13px;
+  line-height:1.7;margin:12px 0;overflow-x:auto;
+  white-space:pre;
+}
+.highlight{color:#f9ca24;}
+.green{color:#2ecc71;}
+.tag{
+  display:inline-block;background:rgba(232,64,28,0.1);
+  color:var(--accent);border:1px solid rgba(232,64,28,0.2);
+  border-radius:4px;padding:2px 8px;font-size:11px;
+  font-family:var(--mono);font-weight:600;margin-right:6px;
+}
+.done{
+  background:rgba(26,138,74,0.08);border:1px solid rgba(26,138,74,0.2);
+  border-radius:10px;padding:16px 20px;margin-top:12px;
+  font-size:14px;color:var(--green);font-weight:600;
+}
+.files-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.file-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.file-name{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);margin-bottom:4px;}
+.file-desc{font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🚀 Setup <span>Guide</span></h1>
+  <div class="subtitle">Firebase + Netlify — Step by step | TechFest Ticket System</div>
+
+  <!-- FILES -->
+  <div class="step">
+    <div class="step-num">📁</div>
+    <div class="step-title">உங்களுக்கு கிடைத்த Files</div>
+    <div class="files-grid">
+      <div class="file-card">
+        <div class="file-name">index.html</div>
+        <div class="file-desc">🌐 Public Booking Page<br>யாரும் access பண்ணலாம்</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name">admin.html</div>
+        <div class="file-desc">🔐 Admin Dashboard<br>Password protected</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+      இந்த 2 files-ஐ ஒரே folder-ல வையுங்க → Netlify-ல upload பண்ணுங்க
+    </div>
+  </div>
+
+  <!-- STEP 1: FIREBASE -->
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-title">🔥 Firebase Project Create பண்ணுங்க</div>
+    <p><strong>1.</strong> <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent)">console.firebase.google.com</a> → Google account-ல login பண்ணுங்க</p>
+    <p><strong>2.</strong> <strong>"Add project"</strong> click → Name: <code>techfest2025</code> → Continue → Create</p>
+    <p><strong>3.</strong> Left sidebar → <strong>"Realtime Database"</strong> → Create database → <strong>Start in test mode</strong> → Enable</p>
+    <p><strong>4.</strong> Project Settings (⚙️ icon) → <strong>"Your apps"</strong> → Web app (</>) icon → App nickname: <code>ticketsys</code> → Register</p>
+    <p><strong>5.</strong> Firebase config copy பண்ணுங்க — இப்படி இருக்கும்:</p>
+    <div class="code-block"><span class="highlight">const firebaseConfig = {</span>
+  apiKey: <span class="green">"AIzaSy..."</span>,
+  authDomain: <span class="green">"techfest2025.firebaseapp.com"</span>,
+  databaseURL: <span class="green">"https://techfest2025-default-rtdb.firebaseio.com"</span>,
+  projectId: <span class="green">"techfest2025"</span>,
+  storageBucket: <span class="green">"techfest2025.appspot.com"</span>,
+  messagingSenderId: <span class="green">"123456789"</span>,
+  appId: <span class="green">"1:123:web:abc123"</span>
+<span class="highlight">};</span></div>
+  </div>
+
+  <!-- STEP 2: PASTE CONFIG -->
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-title">📝 Config இரண்டு Files-லயும் Paste பண்ணுங்க</div>
+    <p><strong>index.html</strong> மற்றும் <strong>admin.html</strong> — இரண்டிலும் இந்த line தேடுங்க:</p>
+    <div class="code-block"><span class="highlight">// ✅ YOUR FIREBASE CONFIG — Replace with yours from Firebase Console</span>
+const firebaseConfig = {
+  apiKey: <span class="green">"YOUR_API_KEY"</span>,        ← இதை replace பண்ணுங்க
+  ...
+};</div>
+    <p><strong>YOUR_API_KEY, YOUR_PROJECT</strong> எல்லாத்தையும் உங்கள் actual config-ல உள்ள values-ஆல replace பண்ணுங்க.</p>
+    <div class="done">✅ இரண்டு files-லயும் same config paste பண்ணணும்!</div>
+  </div>
+
+  <!-- STEP 3: NETLIFY -->
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-title">🌐 Netlify-ல Deploy பண்ணுங்க</div>
+    <p><strong>1.</strong> <a href="https://netlify.com" target="_blank" style="color:var(--accent)">netlify.com</a> → Sign up (Free) → Login</p>
+    <p><strong>2.</strong> Dashboard → <strong>"Add new site"</strong> → <strong>"Deploy manually"</strong></p>
+    <p><strong>3.</strong> உங்கள் folder-ஐ (index.html + admin.html இருக்கிற folder) drag & drop பண்ணுங்க</p>
+    <p><strong>4.</strong> Deploy ஆகும் → உங்களுக்கு link கிடைக்கும்:</p>
+    <div class="code-block">🔗 Public:  <span class="green">https://techfest2025.netlify.app</span>          ← Users-க்கு share பண்ணுங்க
+🔐 Admin:  <span class="green">https://techfest2025.netlify.app/admin.html</span>  ← நீங்க மட்டும் use பண்ணுங்க</div>
+    <p>Custom domain வேணும்னா: <strong>Domain settings</strong> → Add custom domain (optional)</p>
+  </div>
+
+  <!-- STEP 4: TEST -->
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-title">✅ Test பண்ணுங்க</div>
+    <ul>
+      <li>Public link open பண்ணி ticket book பண்ணுங்க</li>
+      <li>Admin page open → <code>admin</code> / <code>admin123</code> → Login</li>
+      <li>Dashboard-ல ticket real-time-ல தெரியணும் 🎉</li>
+      <li>Verify section-ல ticket ID enter பண்ணி check பண்ணுங்க</li>
+    </ul>
+    <div class="done">✅ யாரும் WhatsApp-ல link share பண்ணி ticket book பண்ணலாம்!</div>
+  </div>
+
+  <!-- ADMIN CREDS -->
+  <div class="step">
+    <div class="step-num">🔐</div>
+    <div class="step-title">Admin Password மாத்தணும்னா</div>
+    <p><strong>admin.html</strong>-ல இந்த lines தேடுங்க:</p>
+    <div class="code-block">const ADMIN_USER = <span class="green">'admin'</span>;      ← உங்கள் username
+const ADMIN_PASS = <span class="green">'admin123'</span>;   ← உங்கள் password மாத்துங்க</div>
+    <p>உங்களுக்கு பிடிச்ச password வையுங்க, பிறகு Netlify-ல re-upload பண்ணுங்க.</p>
+  </div>
+
+  <div style="text-align:center;padding:32px 0 0;font-size:13px;color:var(--muted)">
+    🎉 Done! உங்கள் ticket system இப்போ worldwide accessible!
+  </div>
+</div>
+</body>
+</html>

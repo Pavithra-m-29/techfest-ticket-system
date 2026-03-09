@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Buy from Seller — Scan & Verify</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0f0f14; --surface:#18181f; --surface2:#22222c;
+  --border:#2e2e3d; --text:#e8e8f0; --muted:#6b6b88;
+  --green:#2ecc71; --red:#fc5c7d; --yellow:#f9ca24; --blue:#5c9dfc;
+  --font:'Outfit',sans-serif; --display:'Bebas Neue',cursive;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+
+.container{max-width:480px;margin:0 auto;padding:28px 20px;}
+
+/* HEADER */
+.header{text-align:center;padding:32px 0 24px;}
+.header-icon{font-size:48px;margin-bottom:8px;}
+.header-title{font-family:var(--display);font-size:42px;letter-spacing:2px;line-height:1;}
+.header-title span{color:var(--yellow);}
+.header-sub{font-size:14px;color:var(--muted);margin-top:8px;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px;}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.card-title{font-size:15px;font-weight:700;}
+.card-body{padding:20px;}
+
+/* SCANNER */
+.scanner-wrap{
+  position:relative;width:100%;aspect-ratio:1;
+  background:#000;border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#video{width:100%;height:100%;object-fit:cover;display:block;}
+.scan-overlay{
+  position:absolute;inset:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.scan-frame{
+  width:65%;height:65%;border-radius:12px;
+  border:2px solid rgba(249,202,36,0.8);
+  box-shadow:0 0 0 9999px rgba(0,0,0,0.45);
+  position:relative;
+}
+.scan-frame::before,.scan-frame::after{
+  content:'';position:absolute;width:24px;height:24px;
+  border-color:var(--yellow);border-style:solid;
+}
+.scan-frame::before{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:4px 0 0 0;}
+.scan-frame::after{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-radius:0 0 4px 0;}
+
+/* scan line animation */
+.scan-line{
+  position:absolute;left:5%;width:90%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--yellow),transparent);
+  animation:scanMove 2s ease-in-out infinite;
+  top:50%;
+}
+@keyframes scanMove{
+  0%{top:10%} 50%{top:85%} 100%{top:10%}
+}
+
+.scanner-msg{
+  position:absolute;bottom:12px;left:0;right:0;text-align:center;
+  font-size:13px;font-weight:600;letter-spacing:0.5px;
+  color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.8);
+}
+
+.btn-scan{
+  width:100%;padding:14px;border:none;border-radius:10px;
+  font-family:var(--display);font-size:20px;letter-spacing:1px;
+  cursor:pointer;transition:all 0.2s;margin-top:12px;
+}
+.btn-start{background:var(--yellow);color:#111;}
+.btn-start:hover{background:#e8b800;transform:translateY(-1px);}
+.btn-stop{background:rgba(252,92,125,0.15);color:var(--red);border:1px solid rgba(252,92,125,0.3);}
+.btn-stop:hover{background:var(--red);color:#fff;}
+
+/* MANUAL */
+.manual-row{display:flex;gap:10px;margin-top:4px;}
+.inp{
+  flex:1;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:11px 14px;color:var(--text);
+  font-family:var(--font);font-size:14px;outline:none;transition:border-color 0.2s;
+}
+.inp:focus{border-color:var(--yellow);}
+.inp::placeholder{color:var(--muted);}
+.btn-verify{
+  padding:11px 20px;background:var(--yellow);color:#111;
+  border:none;border-radius:10px;font-family:var(--display);
+  font-size:17px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;white-space:nowrap;
+}
+.btn-verify:hover{background:#e8b800;}
+
+/* RESULT */
+.result-box{
+  border-radius:14px;padding:24px;text-align:center;
+  display:none;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  margin-bottom:16px;
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+.result-box.valid  {background:rgba(46,204,113,0.1);border:2px solid rgba(46,204,113,0.4);}
+.result-box.fake   {background:rgba(252,92,125,0.1);border:2px solid rgba(252,92,125,0.4);}
+.result-box.used   {background:rgba(249,202,36,0.1);border:2px solid rgba(249,202,36,0.4);}
+.result-box.sold   {background:rgba(252,92,125,0.1);border:2px solid rgba(252,92,125,0.4);}
+.result-box.show   {display:block;}
+
+.r-icon{font-size:52px;margin-bottom:10px;}
+.r-title{font-family:var(--display);font-size:30px;letter-spacing:1px;margin-bottom:6px;}
+.r-title.green{color:var(--green);}
+.r-title.red{color:var(--red);}
+.r-title.yellow{color:var(--yellow);}
+.r-detail{font-size:14px;color:var(--muted);line-height:1.5;}
+.r-info{
+  background:rgba(255,255,255,0.05);border-radius:8px;
+  padding:10px 14px;margin-top:12px;font-size:13px;text-align:left;
+}
+.r-info-row{display:flex;justify-content:space-between;padding:3px 0;}
+.r-info-row .k{color:var(--muted);}
+.r-info-row .v{font-weight:600;}
+
+.btn-reset{
+  margin-top:14px;padding:10px 24px;background:var(--surface2);
+  color:var(--text);border:1px solid var(--border);border-radius:8px;
+  font-family:var(--display);font-size:17px;letter-spacing:1px;cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-reset:hover{background:var(--surface);border-color:var(--yellow);}
+
+/* TIPS */
+.tips{background:rgba(92,157,252,0.08);border:1px solid rgba(92,157,252,0.2);border-radius:12px;padding:16px;margin-bottom:16px;}
+.tips-title{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px;}
+.tip{display:flex;gap:8px;font-size:13px;color:var(--muted);margin-bottom:5px;align-items:flex-start;line-height:1.4;}
+.tip-icon{flex-shrink:0;}
+
+.back-link{text-align:center;padding:16px 0;font-size:13px;}
+.back-link a{color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.back-link a:hover{color:var(--yellow);}
+
+/* Loading spinner */
+.spinner{
+  display:inline-block;width:16px;height:16px;
+  border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;
+  border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-icon">🤝</div>
+    <div class="header-title">BUY FROM<br><span>SELLER</span></div>
+    <div class="header-sub">Seller-கிட்ட வாங்குறதுக்கு முன்னாடி QR scan பண்ணுங்க</div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="tips">
+    <div class="tips-title">📋 எப்படி use பண்றது?</div>
+    <div class="tip"><span class="tip-icon">1️⃣</span><span>Seller-கிட்ட ticket QR காட்டச் சொல்லுங்க</span></div>
+    <div class="tip"><span class="tip-icon">2️⃣</span><span>கீழே உள்ள camera-ல அந்த QR scan பண்ணுங்க</span></div>
+    <div class="tip"><span class="tip-icon">✅</span><span><strong style="color:var(--green)">ORIGINAL</strong> வந்தா — Safe to buy!</span></div>
+    <div class="tip"><span class="tip-icon">❌</span><span><strong style="color:var(--red)">FAKE / SOLD</strong> வந்தா — வாங்காதீங்க!</span></div>
+  </div>
+
+  <!-- RESULT BOX (shown after scan) -->
+  <div class="result-box" id="result-box">
+    <div class="r-icon" id="r-icon"></div>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-detail" id="r-detail"></div>
+    <div class="r-info" id="r-info" style="display:none"></div>
+    <button class="btn-reset" onclick="resetScanner()">🔄 Again Scan பண்ணு</button>
+  </div>
+
+  <!-- SCANNER CARD -->
+  <div class="card" id="scanner-card">
+    <div class="card-header">
+      <span>📷</span>
+      <div class="card-title">QR Code Scanner</div>
+    </div>
+    <div class="card-body">
+      <div class="scanner-wrap" id="scanner-wrap">
+        <video id="video" playsinline autoplay muted></video>
+        <div class="scan-overlay" id="scan-overlay" style="display:none">
+          <div class="scan-frame">
+            <div class="scan-line"></div>
+          </div>
+        </div>
+        <div class="scanner-msg" id="scanner-msg" style="display:none">QR Code-ஐ frame-ல வையுங்க</div>
+        <!-- Placeholder when camera off -->
+        <div id="cam-placeholder" style="text-align:center;padding:40px 20px;">
+          <div style="font-size:48px;margin-bottom:12px;">📷</div>
+          <div style="font-size:14px;color:var(--muted)">Camera start பண்ண கீழே click பண்ணுங்க</div>
+        </div>
+      </div>
+      <button class="btn-scan btn-start" id="btn-cam" onclick="toggleCamera()">📷 CAMERA START</button>
+    </div>
+  </div>
+
+  <!-- MANUAL VERIFY CARD -->
+  <div class="card">
+    <div class="card-header">
+      <span>⌨️</span>
+      <div class="card-title">Manual Ticket ID Enter பண்ணுங்க</div>
+    </div>
+    <div class="card-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">QR scan முடியலன்னா ticket number type பண்ணுங்க</div>
+      <div class="manual-row">
+        <input class="inp" id="manual-input" placeholder="e.g. 5-1234567890" onkeydown="if(event.key==='Enter')manualVerify()"/>
+        <button class="btn-verify" onclick="manualVerify()">VERIFY</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-link"><a href="/">← Back to Home</a></div>
+</div>
+
+<!-- jsQR library for QR scanning -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+let stream = null;
+let scanning = false;
+let animFrame = null;
+let lastScan = 0;
+
+// ============================================================
+//  CAMERA TOGGLE
+// ============================================================
+async function toggleCamera() {
+  if (scanning) {
+    stopCamera();
+  } else {
+    startCamera();
+  }
+}
+
+async function startCamera() {
+  const btn = document.getElementById('btn-cam');
+  btn.innerHTML = '<span class="spinner"></span> Starting...';
+  btn.disabled = true;
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
+    });
+    const video = document.getElementById('video');
+    video.srcObject = stream;
+    await video.play();
+
+    document.getElementById('cam-placeholder').style.display = 'none';
+    document.getElementById('scan-overlay').style.display = 'flex';
+    document.getElementById('scanner-msg').style.display = 'block';
+    btn.innerHTML = '⏹ CAMERA STOP';
+    btn.className = 'btn-scan btn-stop';
+    btn.disabled = false;
+    scanning = true;
+    scanLoop();
+  } catch(e) {
+    btn.innerHTML = '📷 CAMERA START';
+    btn.disabled = false;
+    alert('Camera access இல்ல! Browser-ல permission allow பண்ணுங்க.\n\nError: ' + e.message);
+  }
+}
+
+function stopCamera() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+  scanning = false;
+  const video = document.getElementById('video');
+  video.srcObject = null;
+  document.getElementById('cam-placeholder').style.display = 'block';
+  document.getElementById('scan-overlay').style.display = 'none';
+  document.getElementById('scanner-msg').style.display = 'none';
+  const btn = document.getElementById('btn-cam');
+  btn.innerHTML = '📷 CAMERA START';
+  btn.className = 'btn-scan btn-start';
+}
+
+// ============================================================
+//  QR SCAN LOOP
+// ============================================================
+function scanLoop() {
+  if (!scanning) return;
+  const video = document.getElementById('video');
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    const canvas = document.createElement('canvas');
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'dontInvert'
+    });
+    if (code && Date.now() - lastScan > 2000) {
+      lastScan = Date.now();
+      stopCamera();
+      sendToBackend(code.data);
+    }
+  }
+  animFrame = requestAnimationFrame(scanLoop);
+}
+
+// ============================================================
+//  MANUAL VERIFY
+// ============================================================
+function manualVerify() {
+  const val = document.getElementById('manual-input').value.trim();
+  if (!val) return;
+  sendToBackend(val);
+}
+
+// ============================================================
+//  SEND TO FLASK /check_qr
+// ============================================================
+async function sendToBackend(token) {
+  showLoading();
+  try {
+    const res = await fetch('/check_qr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket: token })
+    });
+    const data = await res.json();
+    showResult(data);
+  } catch(e) {
+    showResult({ status:'error', result:'Network Error', detail: 'Server-ஐ reach பண்ண முடியல. Try again!' });
+  }
+}
+
+function showLoading() {
+  const box = document.getElementById('result-box');
+  box.className = 'result-box used show';
+  document.getElementById('r-icon').textContent = '⏳';
+  document.getElementById('r-title').textContent = 'Checking...';
+  document.getElementById('r-title').className = 'r-title yellow';
+  document.getElementById('r-detail').textContent = 'Server-ல verify பண்றோம்...';
+  document.getElementById('r-info').style.display = 'none';
+}
+
+// ============================================================
+//  SHOW RESULT
+// ============================================================
+function showResult(data) {
+  const box    = document.getElementById('result-box');
+  const icon   = document.getElementById('r-icon');
+  const title  = document.getElementById('r-title');
+  const detail = document.getElementById('r-detail');
+  const info   = document.getElementById('r-info');
+
+  box.classList.add('show');
+  info.style.display = 'none';
+
+  // Scroll to result
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  switch(data.status) {
+    case 'valid':
+      box.className = 'result-box valid show';
+      icon.textContent  = '✅';
+      title.textContent = 'ORIGINAL TICKET';
+      title.className   = 'r-title green';
+      detail.textContent = 'இந்த ticket original! Safe to buy. 👍';
+      if (data.ticket_id) {
+        info.style.display = 'block';
+        info.innerHTML = `
+          <div class="r-info-row"><span class="k">Ticket ID</span><span class="v">${data.ticket_id}</span></div>
+          <div class="r-info-row"><span class="k">Owner</span><span class="v">${data.name || '—'}</span></div>
+          <div class="r-info-row"><span class="k">Status</span><span class="v" style="color:var(--green)">✅ Original</span></div>
+        `;
+      }
+      break;
+
+    case 'already_sold':
+      box.className = 'result-box sold show';
+      icon.textContent  = '🚫';
+      title.textContent = 'ALREADY SOLD!';
+      title.className   = 'r-title red';
+      detail.textContent = 'இந்த ticket ஏற்கனவே யாரோட கிட்ட இருக்கு. வாங்காதீங்க! ❌';
+      if (data.ticket_id) {
+        info.style.display = 'block';
+        info.innerHTML = `
+          <div class="r-info-row"><span class="k">Ticket ID</span><span class="v">${data.ticket_id}</span></div>
+          <div class="r-info-row"><span class="k">Owner</span><span class="v">${data.name || '—'}</span></div>
+          <div class="r-info-row"><span class="k">Status</span><span class="v" style="color:var(--red)">❌ Already Owned</span></div>
+        `;
+      }
+      break;
+
+    case 'used':
+      box.className = 'result-box used show';
+      icon.textContent  = '⚠️';
+      title.textContent = 'ALREADY USED!';
+      title.className   = 'r-title yellow';
+      detail.textContent = 'இந்த ticket entry gate-ல already use ஆகிடுச்சு. வாங்காதீங்க!';
+      break;
+
+    case 'fake':
+      box.className = 'result-box fake show';
+      icon.textContent  = '❌';
+      title.textContent = 'FAKE TICKET!';
+      title.className   = 'r-title red';
+      detail.textContent = data.detail || 'இந்த ticket system-ல இல்ல. நம்பாதீங்க!';
+      break;
+
+    default:
+      box.className = 'result-box fake show';
+      icon.textContent  = '⚠️';
+      title.textContent = 'ERROR';
+      title.className   = 'r-title yellow';
+      detail.textContent = data.detail || 'Something went wrong. Try again!';
+  }
+}
+
+// ============================================================
+//  RESET
+// ============================================================
+function resetScanner() {
+  document.getElementById('result-box').className = 'result-box';
+  document.getElementById('manual-input').value = '';
+  // Scroll back to scanner
+  document.getElementById('scanner-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Cleanup on page leave
+window.addEventListener('beforeunload', () => { if (stream) stream.getTracks().forEach(t => t.stop()); });
+</script>
+</body>
+</html>

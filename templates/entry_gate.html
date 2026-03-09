@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Entry Gate — TechFest 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0f0a; --surface:#111811; --surface2:#1a221a;
+  --border:#1e2e1e; --text:#e8f0e8; --muted:#6b886b;
+  --green:#2ecc71; --red:#fc5c7d; --yellow:#f9ca24; --blue:#5c9dfc;
+  --font:'Outfit',sans-serif; --display:'Bebas Neue',cursive;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+
+/* Animated bg grid */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(46,204,113,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,204,113,0.03) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+
+.container{max-width:500px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
+
+/* HEADER */
+.header{text-align:center;padding:28px 0 20px;}
+.header-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);
+  border-radius:20px;padding:6px 16px;margin-bottom:14px;
+  font-size:12px;font-weight:600;color:var(--green);letter-spacing:1px;
+}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+.header-title{font-family:var(--display);font-size:48px;letter-spacing:3px;line-height:1;}
+.header-title span{color:var(--green);}
+.header-sub{font-size:13px;color:var(--muted);margin-top:6px;}
+
+/* RESULT — shown prominently at top after scan */
+.result-box{
+  border-radius:16px;padding:28px;text-align:center;
+  margin-bottom:20px;display:none;
+  animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.result-box.show{display:block;}
+@keyframes popIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+.result-box.allowed {background:rgba(46,204,113,0.12);border:2px solid rgba(46,204,113,0.5);}
+.result-box.used    {background:rgba(249,202,36,0.1); border:2px solid rgba(249,202,36,0.4);}
+.result-box.fake    {background:rgba(252,92,125,0.1); border:2px solid rgba(252,92,125,0.4);}
+.result-box.loading {background:rgba(92,157,252,0.08);border:2px solid rgba(92,157,252,0.3);}
+
+.r-icon{font-size:56px;margin-bottom:10px;display:block;}
+.r-title{font-family:var(--display);font-size:36px;letter-spacing:2px;margin-bottom:6px;}
+.r-title.green{color:var(--green);}
+.r-title.red  {color:var(--red);}
+.r-title.yellow{color:var(--yellow);}
+.r-title.blue {color:var(--blue);}
+.r-detail{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:14px;}
+.r-ticket-id{
+  display:inline-block;font-family:'Courier New',monospace;
+  font-size:13px;padding:5px 14px;border-radius:20px;
+  background:rgba(255,255,255,0.05);color:var(--text);
+  border:1px solid var(--border);letter-spacing:2px;margin-bottom:14px;
+}
+.btn-reset{
+  padding:10px 28px;background:var(--surface2);color:var(--text);
+  border:1px solid var(--border);border-radius:8px;
+  font-family:var(--display);font-size:18px;letter-spacing:1px;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-reset:hover{border-color:var(--green);color:var(--green);}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px;}
+.card-header{
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.card-body{padding:20px;}
+
+/* SCANNER */
+.scanner-wrap{
+  position:relative;width:100%;aspect-ratio:1;max-height:320px;
+  background:#000;border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#video{width:100%;height:100%;object-fit:cover;}
+.scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+.scan-frame{
+  width:60%;height:60%;border-radius:10px;
+  border:2px solid rgba(46,204,113,0.7);
+  box-shadow:0 0 0 9999px rgba(0,0,0,0.5);
+  position:relative;
+}
+/* Corner decorations */
+.scan-frame::before,.scan-frame::after,
+.scan-frame .c3,.scan-frame .c4{
+  content:'';position:absolute;width:20px;height:20px;border-color:var(--green);border-style:solid;
+}
+.scan-frame::before{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:4px 0 0 0;}
+.scan-frame::after {top:-2px;right:-2px;border-width:3px 3px 0 0;border-radius:0 4px 0 0;}
+.scan-frame .c3    {bottom:-2px;left:-2px;border-width:0 0 3px 3px;border-radius:0 0 0 4px;}
+.scan-frame .c4    {bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-radius:0 0 4px 0;}
+
+.scan-line{
+  position:absolute;left:5%;width:90%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  animation:scanMove 2s ease-in-out infinite;
+}
+@keyframes scanMove{0%{top:5%}50%{top:90%}100%{top:5%}}
+.scan-msg{
+  position:absolute;bottom:10px;left:0;right:0;text-align:center;
+  font-size:12px;font-weight:600;color:#fff;
+  text-shadow:0 1px 4px rgba(0,0,0,0.8);letter-spacing:0.5px;
+}
+.cam-placeholder{text-align:center;padding:40px 20px;}
+.cam-placeholder-icon{font-size:48px;margin-bottom:10px;}
+.cam-placeholder-text{font-size:13px;color:var(--muted);}
+
+.btn-cam{
+  width:100%;padding:13px;border:none;border-radius:10px;
+  font-family:var(--display);font-size:20px;letter-spacing:1px;
+  cursor:pointer;transition:all 0.2s;margin-top:12px;
+}
+.btn-start{background:var(--green);color:#0a0f0a;}
+.btn-start:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-stop{background:rgba(252,92,125,0.15);color:var(--red);border:1px solid rgba(252,92,125,0.3);}
+.btn-stop:hover{background:var(--red);color:#fff;}
+
+/* MANUAL */
+.manual-row{display:flex;gap:10px;}
+.inp{
+  flex:1;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;color:var(--text);
+  font-family:'Courier New',monospace;font-size:14px;outline:none;
+  transition:border-color 0.2s;letter-spacing:1px;
+}
+.inp:focus{border-color:var(--green);}
+.inp::placeholder{color:var(--muted);font-family:var(--font);letter-spacing:0;}
+.btn-verify{
+  padding:12px 20px;background:var(--green);color:#0a0f0a;
+  border:none;border-radius:10px;font-family:var(--display);
+  font-size:18px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;white-space:nowrap;
+}
+.btn-verify:hover{filter:brightness(1.1);}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.stat-num{font-family:var(--display);font-size:32px;letter-spacing:-1px;}
+.stat-num.green{color:var(--green);}
+.stat-num.yellow{color:var(--yellow);}
+.stat-num.red{color:var(--red);}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* LOG */
+.log-list{max-height:200px;overflow-y:auto;}
+.log-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid rgba(30,46,30,0.8);
+  font-size:13px;
+}
+.log-item:last-child{border-bottom:none;}
+.log-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.log-dot.green{background:var(--green);}
+.log-dot.red  {background:var(--red);}
+.log-dot.yellow{background:var(--yellow);}
+.log-id{font-family:'Courier New',monospace;font-size:12px;color:var(--muted);flex:1;}
+.log-status{font-size:11px;font-weight:600;}
+.log-time{font-size:10px;color:var(--muted);}
+
+.empty-log{font-size:13px;color:var(--muted);text-align:center;padding:20px;font-family:'Courier New',monospace;}
+
+.footer{text-align:center;padding:20px 0 10px;font-size:12px;color:var(--muted);}
+
+/* Spinner */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spinR 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spinR{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">
+      <div class="live-dot"></div>
+      ENTRY GATE LIVE
+    </div>
+    <div class="header-title">ENTRY<br><span>GATE</span></div>
+    <div class="header-sub">TechFest 2025 · Dec 25, 2025 · Chennai</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num green" id="st-allowed">0</div>
+      <div class="stat-label">✅ Allowed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num yellow" id="st-used">0</div>
+      <div class="stat-label">⚠️ Already Used</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num red" id="st-fake">0</div>
+      <div class="stat-label">❌ Fake</div>
+    </div>
+  </div>
+
+  <!-- RESULT BOX -->
+  <div class="result-box" id="result-box">
+    <span class="r-icon" id="r-icon"></span>
+    <div class="r-title" id="r-title"></div>
+    <div class="r-ticket-id" id="r-tid" style="display:none"></div>
+    <div class="r-detail" id="r-detail"></div>
+    <button class="btn-reset" onclick="resetScan()">🔄 Next Scan</button>
+  </div>
+
+  <!-- CAMERA SCANNER -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📷 QR Scanner</div>
+      <span style="font-size:11px;color:var(--muted);font-family:'Courier New',monospace" id="cam-status">OFF</span>
+    </div>
+    <div class="card-body">
+      <div class="scanner-wrap" id="scanner-wrap">
+        <video id="video" playsinline autoplay muted style="display:none"></video>
+        <div class="scan-overlay" id="scan-overlay" style="display:none">
+          <div class="scan-frame">
+            <div class="scan-line"></div>
+            <div class="c3"></div>
+            <div class="c4"></div>
+          </div>
+        </div>
+        <div class="scan-msg" id="scan-msg" style="display:none">QR Code-ஐ frame-ல வையுங்க</div>
+        <div class="cam-placeholder" id="cam-placeholder">
+          <div class="cam-placeholder-icon">📷</div>
+          <div class="cam-placeholder-text">Camera start பண்ண கீழே click பண்ணுங்க</div>
+        </div>
+      </div>
+      <button class="btn-cam btn-start" id="btn-cam" onclick="toggleCamera()">📷 START CAMERA</button>
+    </div>
+  </div>
+
+  <!-- MANUAL VERIFY -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">⌨️ Manual Ticket ID</div>
+    </div>
+    <div class="card-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Ticket ID type பண்ணி verify பண்ணுங்க</div>
+      <div class="manual-row">
+        <input class="inp" id="manual-inp" placeholder="e.g. 5-1234567890"
+          onkeydown="if(event.key==='Enter')manualVerify()"/>
+        <button class="btn-verify" onclick="manualVerify()">VERIFY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCAN LOG -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📋 Scan Log</div>
+      <button onclick="clearLog()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:var(--font);">Clear</button>
+    </div>
+    <div class="card-body" style="padding:12px 20px">
+      <div class="log-list" id="log-list">
+        <div class="empty-log" id="empty-log">No scans yet...</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-bottom:16px">
+    <a href="/" style="color:var(--muted);font-size:13px;text-decoration:none;">← Back to Home</a>
+    &nbsp;·&nbsp;
+    <a href="/admin" style="color:var(--muted);font-size:13px;text-decoration:none;">Admin →</a>
+  </div>
+
+  <div class="footer">TechFest 2025 · Entry Gate · Powered by TicketSys</div>
+</div>
+
+<!-- jsQR -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+// ============ STATE ============
+let stream = null, scanning = false, animFrame = null, lastScan = 0;
+let counts = { allowed: 0, used: 0, fake: 0 };
+let logs = [];
+
+// ============ CAMERA ============
+async function toggleCamera() {
+  scanning ? stopCamera() : startCamera();
+}
+
+async function startCamera() {
+  const btn = document.getElementById('btn-cam');
+  btn.innerHTML = '<span class="spin"></span>Starting...';
+  btn.disabled = true;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width:{ideal:640}, height:{ideal:640} }
+    });
+    const video = document.getElementById('video');
+    video.srcObject = stream;
+    video.style.display = 'block';
+    await video.play();
+    document.getElementById('cam-placeholder').style.display = 'none';
+    document.getElementById('scan-overlay').style.display    = 'flex';
+    document.getElementById('scan-msg').style.display        = 'block';
+    document.getElementById('cam-status').textContent        = 'ON 🟢';
+    btn.innerHTML   = '⏹ STOP CAMERA';
+    btn.className   = 'btn-cam btn-stop';
+    btn.disabled    = false;
+    scanning = true;
+    scanLoop();
+  } catch(e) {
+    btn.innerHTML = '📷 START CAMERA';
+    btn.className = 'btn-cam btn-start';
+    btn.disabled  = false;
+    alert('Camera permission இல்ல!\nBrowser-ல Allow பண்ணுங்க.\n\n' + e.message);
+  }
+}
+
+function stopCamera() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+  scanning = false;
+  const video = document.getElementById('video');
+  video.srcObject = null;
+  video.style.display = 'none';
+  document.getElementById('cam-placeholder').style.display = 'block';
+  document.getElementById('scan-overlay').style.display    = 'none';
+  document.getElementById('scan-msg').style.display        = 'none';
+  document.getElementById('cam-status').textContent        = 'OFF';
+  const btn = document.getElementById('btn-cam');
+  btn.innerHTML = '📷 START CAMERA';
+  btn.className = 'btn-cam btn-start';
+}
+
+// ============ SCAN LOOP ============
+function scanLoop() {
+  if (!scanning) return;
+  const video = document.getElementById('video');
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    const c = document.createElement('canvas');
+    c.width = video.videoWidth; c.height = video.videoHeight;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(video, 0, 0, c.width, c.height);
+    const img = ctx.getImageData(0, 0, c.width, c.height);
+    const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+    if (code && Date.now() - lastScan > 2500) {
+      lastScan = Date.now();
+      stopCamera();
+      callVerifyQR(code.data);
+    }
+  }
+  animFrame = requestAnimationFrame(scanLoop);
+}
+
+// ============ MANUAL ============
+function manualVerify() {
+  const val = document.getElementById('manual-inp').value.trim();
+  if (!val) return;
+  callVerifyQR(val);
+}
+
+// ============ CALL FLASK /verify_qr ============
+async function callVerifyQR(token) {
+  showLoading(token);
+  try {
+    const res = await fetch('/verify_qr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket: token })
+    });
+    const data = await res.json();
+    handleResult(data.result, token);
+  } catch(e) {
+    handleResult('Error', token);
+  }
+}
+
+// ============ SHOW LOADING ============
+function showLoading(token) {
+  const box = document.getElementById('result-box');
+  box.className = 'result-box loading show';
+  document.getElementById('r-icon').textContent    = '⏳';
+  document.getElementById('r-title').textContent   = 'CHECKING...';
+  document.getElementById('r-title').className     = 'r-title blue';
+  document.getElementById('r-detail').textContent  = 'Server-ல verify பண்றோம்...';
+  document.getElementById('r-tid').style.display   = 'none';
+  box.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+// ============ HANDLE RESULT ============
+function handleResult(result, token) {
+  const box    = document.getElementById('result-box');
+  const icon   = document.getElementById('r-icon');
+  const title  = document.getElementById('r-title');
+  const detail = document.getElementById('r-detail');
+  const tid    = document.getElementById('r-tid');
+
+  tid.textContent    = token;
+  tid.style.display  = 'inline-block';
+  const now = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+
+  if (result === 'Entry Allowed') {
+    box.className      = 'result-box allowed show';
+    icon.textContent   = '✅';
+    title.textContent  = 'ENTRY ALLOWED!';
+    title.className    = 'r-title green';
+    detail.textContent = 'Ticket valid! Entry கொடுங்க 🎉';
+    counts.allowed++;
+    addLog(token, 'allowed', 'Entry Allowed', now);
+
+  } else if (result === 'Ticket Already Used') {
+    box.className      = 'result-box used show';
+    icon.textContent   = '⚠️';
+    title.textContent  = 'ALREADY USED!';
+    title.className    = 'r-title yellow';
+    detail.textContent = 'இந்த ticket already use ஆகிடுச்சு. Entry வேண்டாம்!';
+    counts.used++;
+    addLog(token, 'yellow', 'Already Used', now);
+
+  } else if (result === 'Fake Ticket') {
+    box.className      = 'result-box fake show';
+    icon.textContent   = '❌';
+    title.textContent  = 'FAKE TICKET!';
+    title.className    = 'r-title red';
+    detail.textContent = 'இந்த ticket system-ல இல்ல. Entry வேண்டாம்!';
+    counts.fake++;
+    addLog(token, 'red', 'Fake Ticket', now);
+
+  } else {
+    box.className      = 'result-box fake show';
+    icon.textContent   = '⚠️';
+    title.textContent  = 'ERROR';
+    title.className    = 'r-title yellow';
+    detail.textContent = 'Something went wrong. Again try பண்ணுங்க.';
+    addLog(token, 'yellow', 'Error', now);
+  }
+
+  updateStats();
+  document.getElementById('manual-inp').value = '';
+}
+
+// ============ STATS ============
+function updateStats() {
+  document.getElementById('st-allowed').textContent = counts.allowed;
+  document.getElementById('st-used').textContent    = counts.used;
+  document.getElementById('st-fake').textContent    = counts.fake;
+}
+
+// ============ LOG ============
+function addLog(token, color, status, time) {
+  logs.unshift({ token, color, status, time });
+  if (logs.length > 50) logs.pop();
+  renderLog();
+}
+
+function renderLog() {
+  const el = document.getElementById('log-list');
+  document.getElementById('empty-log')?.remove();
+  if (!logs.length) {
+    el.innerHTML = '<div class="empty-log" id="empty-log">No scans yet...</div>';
+    return;
+  }
+  el.innerHTML = logs.map(l => `
+    <div class="log-item">
+      <div class="log-dot ${l.color}"></div>
+      <div class="log-id">${l.token.length > 20 ? l.token.substring(0,20)+'...' : l.token}</div>
+      <div class="log-status" style="color:var(--${l.color === 'allowed' ? 'green' : l.color === 'red' ? 'red' : 'yellow'})">${l.status}</div>
+      <div class="log-time">${l.time}</div>
+    </div>
+  `).join('');
+}
+
+function clearLog() {
+  logs = [];
+  counts = { allowed:0, used:0, fake:0 };
+  updateStats();
+  renderLog();
+}
+
+function resetScan() {
+  document.getElementById('result-box').className = 'result-box';
+  document.getElementById('manual-inp').value = '';
+  document.getElementById('scanner-wrap').scrollIntoView({ behavior:'smooth' });
+}
+
+window.addEventListener('beforeunload', () => {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+});
+</script>
+</body>
+</html>
