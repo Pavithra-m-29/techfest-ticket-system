@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>TechFest 2025 — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="/static/jsqr.js"></script>
+
 <style>
 :root {
   --bg:#0a0a0f; --surface:#12121a; --surface2:#1a1a26;
@@ -15,17 +17,8 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
-
-/* LOGIN */
-#login-screen{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(ellipse at 50% 0%,rgba(124,92,252,0.15) 0%,transparent 70%);
-}
-.login-box{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:20px;padding:40px;width:360px;text-align:center;
-  animation:fadeUp 0.5s ease both;
-}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,rgba(124,92,252,0.15) 0%,transparent 70%);}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:360px;text-align:center;animation:fadeUp 0.5s ease both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .login-icon{font-size:42px;margin-bottom:12px;}
 .login-title{font-size:24px;font-weight:800;letter-spacing:-1px;margin-bottom:4px;}
@@ -35,12 +28,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .btn-login{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:15px;cursor:pointer;transition:all 0.2s;}
 .btn-login:hover{background:#6a4de8;transform:translateY(-1px);}
 .login-err{color:var(--red);font-size:13px;margin-top:10px;display:none;}
-
-/* DASHBOARD */
 #dashboard{display:none;}
 .layout{display:flex;}
-
-/* SIDEBAR */
 .sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 0;position:fixed;height:100vh;z-index:10;}
 .logo{padding:0 24px 28px;border-bottom:1px solid var(--border);}
 .logo-icon{font-size:22px;}
@@ -54,8 +43,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .sidebar-footer{padding:16px 24px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);font-family:var(--mono);}
 .btn-logout{margin:0 12px;padding:8px 12px;background:rgba(252,92,125,0.1);color:var(--red);border:1px solid rgba(252,92,125,0.3);border-radius:8px;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;width:calc(100% - 24px);}
 .btn-logout:hover{background:var(--red);color:#fff;}
-
-/* MAIN */
 .main{margin-left:220px;flex:1;padding:32px;overflow-y:auto;}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
 .page-title{font-size:26px;font-weight:800;letter-spacing:-1px;}
@@ -63,8 +50,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .badge-live{background:rgba(46,204,113,0.15);color:var(--green);border:1px solid rgba(46,204,113,0.3);padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--mono);display:flex;align-items:center;gap:6px;}
 .badge-live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-
-/* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:transform 0.2s,border-color 0.2s;}
 .stat-card:hover{transform:translateY(-2px);border-color:var(--accent);}
@@ -77,46 +62,133 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .stat-num{font-size:38px;font-weight:800;letter-spacing:-2px;margin:6px 0 2px;}
 .stat-sub{font-size:12px;color:var(--muted);}
 .stat-icon{position:absolute;right:18px;top:18px;font-size:28px;opacity:0.15;}
-
-/* PANEL */
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
 .panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-size:14px;font-weight:700;}
 .panel-body{padding:16px 20px;}
-
-/* TABLE */
 .tbl{width:100%;border-collapse:collapse;font-size:13px;}
 .tbl th{text-align:left;padding:8px 12px;color:var(--muted);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
 .tbl td{padding:10px 12px;border-bottom:1px solid rgba(42,42,61,0.5);}
 .tbl tr:last-child td{border-bottom:none;}
 .tbl tr:hover td{background:var(--surface2);}
-
-/* BADGES */
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--mono);font-weight:500;}
 .badge.valid {background:rgba(46,204,113,0.1);color:var(--green);border:1px solid rgba(46,204,113,0.2);}
 .badge.used  {background:rgba(124,92,252,0.1);color:var(--accent);border:1px solid rgba(124,92,252,0.2);}
 .badge.fake  {background:rgba(252,92,125,0.1);color:var(--red);border:1px solid rgba(252,92,125,0.2);}
 .badge.sold1 {background:rgba(46,204,113,0.1);color:var(--green);border:1px solid rgba(46,204,113,0.2);}
 .badge.sold0 {background:rgba(252,92,125,0.1);color:var(--red);border:1px solid rgba(252,92,125,0.2);}
-
-/* VERIFY */
 .verify-row{display:flex;gap:10px;margin-bottom:16px;}
 .v-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color 0.2s;}
 .v-input:focus{border-color:var(--accent);}
 .btn{padding:10px 20px;border-radius:8px;border:none;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
 .btn-p{background:var(--accent);color:#fff;}.btn-p:hover{background:#6a4de8;}
+.btn-g{background:var(--green);color:#000;}.btn-g:hover{background:#27ae60;}
+.btn-r{background:var(--red);color:#fff;}.btn-r:hover{background:#e0365a;}
 .btn-sm{padding:4px 10px;font-size:11px;}
 .result-box{background:var(--surface2);border-radius:10px;padding:14px 16px;display:none;font-family:var(--mono);font-size:13px;margin-top:12px;}
 .result-box.show{display:block;}
 .r-icon{font-size:24px;margin-bottom:6px;}
 .r-msg{font-weight:600;font-size:14px;margin-bottom:4px;}
 .r-detail{color:var(--muted);font-size:12px;}
+.gate-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.cam-wrap{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:4/3;}
+#gate-video{width:100%;height:100%;object-fit:cover;display:block;}
+.cam-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.scan-box{width:200px;height:200px;border:3px solid var(--accent);border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.4);}
+.scan-line{position:absolute;width:180px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scanMove 2s linear infinite;}
+@keyframes scanMove{0%{top:calc(50% - 97px)}100%{top:calc(50% + 97px)}}
+.cam-status{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.7);}
 
+/* ✅ NEW: camera error banner */
+.cam-err-banner{
+  margin-top:10px;padding:12px 14px;border-radius:10px;
+  background:rgba(252,92,125,0.1);border:1px solid rgba(252,92,125,0.3);
+  color:var(--red);font-size:13px;line-height:1.6;display:none;
+}
+.cam-err-banner.show{display:block;}
+
+.gate-result{border-radius:14px;padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;border:1px solid var(--border);}
+.gate-result.idle{background:var(--surface);}
+.gate-result.allowed{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.4);}
+.gate-result.used{background:rgba(249,202,36,0.1);border-color:rgba(249,202,36,0.4);}
+.gate-result.fake{background:rgba(252,92,125,0.1);border-color:rgba(252,92,125,0.4);}
+.gate-emoji{font-size:52px;margin-bottom:12px;}
+.gate-status{font-size:22px;font-weight:800;letter-spacing:-0.5px;}
+.gate-tid{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:6px;}
+.gate-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;}
+.gstat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.gstat-num{font-size:28px;font-weight:800;letter-spacing:-1px;}
+.gstat-lbl{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px;}
+.scan-log{margin-top:20px;}
+.log-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:6px;font-family:var(--mono);font-size:12px;}
+.log-item.ok{background:rgba(46,204,113,0.08);}
+.log-item.warn{background:rgba(249,202,36,0.08);}
+.log-item.err{background:rgba(252,92,125,0.08);}
 .mono{font-family:var(--mono);}
 .empty-msg{color:var(--muted);font-family:var(--mono);font-size:13px;padding:20px;text-align:center;}
-
 .sec{display:none;animation:fadeUp 0.3s ease both;}
 .sec.active{display:block;}
+
+/* ── BLOCKCHAIN STYLES ── */
+.chain-wrap { display: flex; flex-direction: column; gap: 0; }
+.block-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.block-card:hover { border-color: var(--accent); }
+.block-card.genesis { border-color: var(--yellow); }
+.block-connector {
+  width: 2px; height: 28px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  margin: 0 auto;
+  position: relative;
+}
+.block-connector::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  border-right: 2px solid var(--accent2);
+  border-bottom: 2px solid var(--accent2);
+  transform: translateX(-50%) rotate(45deg);
+}
+.block-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.block-index { font-size: 13px; font-weight: 800; font-family: var(--mono); color: var(--accent); }
+.block-index.genesis-tag { color: var(--yellow); }
+.block-time { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.block-data {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--green);
+}
+.block-data .data-label { color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+.hash-row { display: flex; flex-direction: column; gap: 6px; }
+.hash-item { display: flex; gap: 10px; align-items: flex-start; }
+.hash-label { font-size: 10px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; min-width: 70px; padding-top: 2px; }
+.hash-value {
+  font-size: 11px; font-family: var(--mono);
+  color: var(--accent2); word-break: break-all;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 8px; flex: 1;
+}
+.hash-value.prev { color: var(--muted); }
+.tamper-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px; font-size: 11px;
+  font-family: var(--mono); font-weight: 500;
+  background: rgba(46,204,113,0.1); color: var(--green);
+  border: 1px solid rgba(46,204,113,0.2);
+}
 </style>
 </head>
 <body>
@@ -124,13 +196,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-icon">🔐</div>
+    <div class="login-icon">&#128272;</div>
     <div class="login-title">Admin Login</div>
     <div class="login-sub">TechFest 2025 Dashboard</div>
     <input class="inp" type="text" id="l-user" placeholder="Username" onkeydown="if(event.key==='Enter')doLogin()"/>
     <input class="inp" type="password" id="l-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/>
     <button class="btn-login" onclick="doLogin()">LOGIN</button>
-    <div class="login-err" id="l-err">❌ Wrong credentials</div>
+    <div class="login-err" id="l-err">Wrong credentials</div>
     <div style="margin-top:16px;font-size:11px;color:var(--muted);font-family:var(--mono)">Default: admin / admin123</div>
   </div>
 </div>
@@ -140,17 +212,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 <div class="layout">
   <aside class="sidebar">
     <div class="logo">
-      <div class="logo-icon">🎫</div>
+      <div class="logo-icon">&#127915;</div>
       <div class="logo-text">TicketSys</div>
       <div class="logo-sub">Admin Panel</div>
     </div>
     <nav class="nav">
-      <div class="nav-item active" onclick="showSec('overview')"><span class="icon">📊</span> Overview</div>
-      <div class="nav-item" onclick="showSec('tickets')"><span class="icon">🎟️</span> All Tickets</div>
-      <div class="nav-item" onclick="showSec('verify')"><span class="icon">🔍</span> Verify</div>
-      <div class="nav-item" onclick="showSec('fakes')"><span class="icon">🚨</span> Fake Alerts</div>
+      <div class="nav-item active" onclick="showSec('overview')"><span class="icon">&#128202;</span> Overview</div>
+      <div class="nav-item" onclick="showSec('tickets')"><span class="icon">&#127903;</span> All Tickets</div>
+      <div class="nav-item" onclick="showSec('entry')"><span class="icon">&#128682;</span> Entry Gate</div>
+      <div class="nav-item" onclick="showSec('verify')"><span class="icon">&#128269;</span> Verify</div>
+      <div class="nav-item" onclick="showSec('fakes')"><span class="icon">&#128680;</span> Fake Alerts</div>
+      <div class="nav-item" onclick="showSec('blockchain')"><span class="icon">&#9981;</span> Blockchain</div>
     </nav>
-    <button class="btn-logout" onclick="doLogout()">🚪 Logout</button>
+    <button class="btn-logout" onclick="doLogout()">Logout</button>
     <div class="sidebar-footer">Event: TechFest 2025<br>25 Dec 2025</div>
   </aside>
 
@@ -163,80 +237,27 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <div class="badge-live">LIVE</div>
       </div>
       <div class="stats-grid">
-        <div class="stat-card c1">
-          <div class="stat-icon">🎫</div>
-          <div class="stat-label">Total Tickets</div>
-          <div class="stat-num">{{ total }}</div>
-          <div class="stat-sub">Generated</div>
-        </div>
-        <div class="stat-card c2">
-          <div class="stat-icon">💳</div>
-          <div class="stat-label">Sold Online</div>
-          <div class="stat-num">{{ total - not_used if total else 0 }}</div>
-          <div class="stat-sub">sold=1</div>
-        </div>
-        <div class="stat-card c3">
-          <div class="stat-icon">🚪</div>
-          <div class="stat-label">Entered</div>
-          <div class="stat-num">{{ used }}</div>
-          <div class="stat-sub">Used tickets</div>
-        </div>
-        <div class="stat-card c4">
-          <div class="stat-icon">🚨</div>
-          <div class="stat-label">Fake Attempts</div>
-          <div class="stat-num">{{ fake_count }}</div>
-          <div class="stat-sub">Invalid scans</div>
-        </div>
+        <div class="stat-card c1"><div class="stat-icon">&#127915;</div><div class="stat-label">Total Tickets</div><div class="stat-num">{{ total }}</div><div class="stat-sub">Generated</div></div>
+        <div class="stat-card c2"><div class="stat-icon">&#128179;</div><div class="stat-label">Sold Online</div><div class="stat-num">{{ total - not_used if total else 0 }}</div><div class="stat-sub">sold=1</div></div>
+        <div class="stat-card c3"><div class="stat-icon">&#128682;</div><div class="stat-label">Entered</div><div class="stat-num">{{ used }}</div><div class="stat-sub">Used tickets</div></div>
+        <div class="stat-card c4"><div class="stat-icon">&#128680;</div><div class="stat-label">Fake Attempts</div><div class="stat-num">{{ fake_count }}</div><div class="stat-sub">Invalid scans</div></div>
       </div>
-
-      <!-- RECENT TICKETS TABLE -->
       <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">🕐 Recent Bookings</div>
-          <span style="font-size:12px;color:var(--muted);font-family:var(--mono)">Latest 8</span>
-        </div>
+        <div class="panel-header"><div class="panel-title">Recent Bookings</div><span style="font-size:12px;color:var(--muted);font-family:var(--mono)">Latest 8</span></div>
         <div style="padding:0">
           <table class="tbl">
-            <thead>
-              <tr>
-                <th>Ticket ID</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Sold</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Ticket ID</th><th>Name</th><th>Status</th><th>Sold</th><th>Action</th></tr></thead>
             <tbody>
-              {% if tickets %}
-                {% for t in tickets[:8] %}
-                <tr>
-                  <td class="mono" style="color:var(--accent)">#{{ t[0] }}</td>
-                  <td>{{ t[1] or '—' }}</td>
-                  <td>
-                    {% if t[3] == 1 %}
-                      <span class="badge used">Used ✓</span>
-                    {% else %}
-                      <span class="badge valid">Valid</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if t[2] == 1 %}
-                      <span class="badge sold1">sold=1 ✅</span>
-                    {% else %}
-                      <span class="badge sold0">sold=0</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if t[3] == 0 %}
-                      <a href="/mark_used/{{ t[0] }}"><button class="btn btn-p btn-sm">Mark Used</button></a>
-                    {% else %}
-                      <span style="color:var(--muted);font-size:12px">Done</span>
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-              {% else %}
-                <tr><td colspan="5" class="empty-msg">No tickets yet</td></tr>
+              {% if tickets %}{% for t in tickets[:8] %}
+              <tr>
+                <td class="mono" style="color:var(--accent)">#{{ t[0] }}</td>
+                <td>{{ t[1] or '-' }}</td>
+                <td>{% if t[3] == 1 %}<span class="badge used">Used</span>{% else %}<span class="badge valid">Valid</span>{% endif %}</td>
+                <td>{% if t[2] == 1 %}<span class="badge sold1">sold=1</span>{% else %}<span class="badge sold0">sold=0</span>{% endif %}</td>
+                <td>{% if t[3] == 0 %}<a href="/mark_used/{{ t[0] }}"><button class="btn btn-p btn-sm">Mark Used</button></a>{% else %}<span style="color:var(--muted);font-size:12px">Done</span>{% endif %}</td>
+              </tr>
+              {% endfor %}{% else %}
+              <tr><td colspan="5" class="empty-msg">No tickets yet</td></tr>
               {% endif %}
             </tbody>
           </table>
@@ -250,46 +271,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       <div class="panel">
         <div style="padding:0">
           <table class="tbl">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Sold</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+            <thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Sold</th><th>Action</th></tr></thead>
             <tbody>
-              {% if tickets %}
-                {% for t in tickets %}
-                <tr>
-                  <td class="mono" style="color:var(--accent)">#{{ t[0] }}</td>
-                  <td>{{ t[1] or '—' }}</td>
-                  <td>
-                    {% if t[3] == 1 %}
-                      <span class="badge used">Used ✓</span>
-                    {% else %}
-                      <span class="badge valid">Valid</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if t[2] == 1 %}
-                      <span class="badge sold1">sold=1 ✅</span>
-                    {% else %}
-                      <span class="badge sold0">sold=0</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if t[3] == 0 %}
-                      <a href="/mark_used/{{ t[0] }}"><button class="btn btn-p btn-sm">Mark Used</button></a>
-                    {% else %}
-                      <span style="color:var(--muted);font-size:12px">Done</span>
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-              {% else %}
-                <tr><td colspan="5" class="empty-msg">No tickets yet</td></tr>
+              {% if tickets %}{% for t in tickets %}
+              <tr>
+                <td class="mono" style="color:var(--accent)">#{{ t[0] }}</td>
+                <td>{{ t[1] or '-' }}</td>
+                <td>{% if t[3] == 1 %}<span class="badge used">Used</span>{% else %}<span class="badge valid">Valid</span>{% endif %}</td>
+                <td>{% if t[2] == 1 %}<span class="badge sold1">sold=1</span>{% else %}<span class="badge sold0">sold=0</span>{% endif %}</td>
+                <td>{% if t[3] == 0 %}<a href="/mark_used/{{ t[0] }}"><button class="btn btn-p btn-sm">Mark Used</button></a>{% else %}<span style="color:var(--muted);font-size:12px">Done</span>{% endif %}</td>
+              </tr>
+              {% endfor %}{% else %}
+              <tr><td colspan="5" class="empty-msg">No tickets yet</td></tr>
               {% endif %}
             </tbody>
           </table>
@@ -297,9 +290,67 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
     </div>
 
+    <!-- ENTRY GATE -->
+    <div class="sec" id="sec-entry">
+      <div class="topbar">
+        <div class="page-title">Entry <span>Gate</span></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-g" onclick="startCamera()" id="btn-start">Start Camera</button>
+          <button class="btn btn-r" onclick="stopCamera()" id="btn-stop" style="display:none">Stop</button>
+        </div>
+      </div>
+      <div class="gate-layout">
+        <div>
+          <div class="cam-wrap">
+            <video id="gate-video" autoplay playsinline muted></video>
+            <canvas id="gate-canvas" style="display:none"></canvas>
+            <div class="cam-overlay">
+              <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+                <div class="scan-box"></div>
+                <div class="scan-line" id="scan-line"></div>
+              </div>
+            </div>
+            <div class="cam-status" id="cam-status">Click "Start Camera" to begin</div>
+          </div>
+
+          <!-- ✅ FIX: Friendly error banner (replaces raw JS error in cam-status) -->
+          <div class="cam-err-banner" id="cam-err-banner"></div>
+
+          <div style="margin-top:16px;">
+            <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:8px">OR MANUAL TICKET ID</div>
+            <div class="verify-row">
+              <input class="v-input" id="gate-manual" placeholder="e.g. 5" onkeydown="if(event.key==='Enter')gateManual()"/>
+              <button class="btn btn-p" onclick="gateManual()">Allow</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="gate-result idle" id="gate-result">
+            <div class="gate-emoji">&#127915;</div>
+            <div class="gate-status" style="color:var(--muted)">Waiting for scan...</div>
+            <div class="gate-tid">Point camera at QR code</div>
+          </div>
+          <div class="gate-stats">
+            <div class="gstat"><div class="gstat-num" style="color:var(--green)" id="g-allowed">0</div><div class="gstat-lbl">Allowed</div></div>
+            <div class="gstat"><div class="gstat-num" style="color:var(--yellow)" id="g-used">0</div><div class="gstat-lbl">Already Used</div></div>
+            <div class="gstat"><div class="gstat-num" style="color:var(--red)" id="g-fake">0</div><div class="gstat-lbl">Fake</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="scan-log">
+        <div class="panel-header" style="margin-top:20px;border:1px solid var(--border);border-radius:14px 14px 0 0;background:var(--surface)">
+          <div class="panel-title">Scan Log</div>
+          <button class="btn btn-sm" onclick="clearLog()" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);">Clear</button>
+        </div>
+        <div id="scan-log-body" style="background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;padding:12px;max-height:200px;overflow-y:auto;">
+          <div style="color:var(--muted);font-family:var(--mono);font-size:12px;text-align:center;padding:10px">No scans yet</div>
+        </div>
+      </div>
+    </div>
+
     <!-- VERIFY -->
     <div class="sec" id="sec-verify">
-      <div class="topbar"><div class="page-title">🔍 Verify <span>Ticket</span></div></div>
+      <div class="topbar"><div class="page-title">Verify <span>Ticket</span></div></div>
       <div class="panel" style="max-width:520px">
         <div class="panel-header"><div class="panel-title">Manual Ticket Verify</div></div>
         <div class="panel-body">
@@ -319,7 +370,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
     <!-- FAKE ALERTS -->
     <div class="sec" id="sec-fakes">
-      <div class="topbar"><div class="page-title">🚨 Fake <span>Alerts</span></div></div>
+      <div class="topbar"><div class="page-title">Fake <span>Alerts</span></div></div>
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">Invalid Scan Log</div>
@@ -327,28 +378,66 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         </div>
         <div style="padding:0">
           <table class="tbl">
-            <thead>
-              <tr>
-                <th>Ticket ID</th>
-                <th>Reason</th>
-                <th>Time</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Ticket ID</th><th>Reason</th><th>Time</th></tr></thead>
             <tbody>
-              {% if fakes %}
-                {% for f in fakes %}
-                <tr>
-                  <td class="mono" style="color:var(--red)">{{ f[0] }}</td>
-                  <td style="font-size:12px;color:var(--muted)">{{ f[1] }}</td>
-                  <td class="mono" style="font-size:11px;color:var(--muted)">{{ f[2] }}</td>
-                </tr>
-                {% endfor %}
-              {% else %}
-                <tr><td colspan="3" class="empty-msg">No fake attempts 🎉</td></tr>
+              {% if fakes %}{% for f in fakes %}
+              <tr>
+                <td class="mono" style="color:var(--red)">{{ f[0] }}</td>
+                <td style="font-size:12px;color:var(--muted)">{{ f[1] }}</td>
+                <td class="mono" style="font-size:11px;color:var(--muted)">{{ f[2] }}</td>
+              </tr>
+              {% endfor %}{% else %}
+              <tr><td colspan="3" class="empty-msg">No fake attempts</td></tr>
               {% endif %}
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- BLOCKCHAIN -->
+    <div class="sec" id="sec-blockchain">
+      <div class="topbar">
+        <div class="page-title">Blockchain <span>Ledger</span></div>
+        <div class="tamper-badge">Tamper-Proof</div>
+      </div>
+      <div style="background:rgba(124,92,252,0.08);border:1px solid rgba(124,92,252,0.2);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.8;">
+        Every ticket booking is permanently recorded as a block in the chain.
+        Each block contains the previous block's hash — so if anyone tampers with the database,
+        the hashes will not match, and the fraud is instantly detected.
+      </div>
+      <div class="chain-wrap">
+        {% for block in chain %}
+        <div class="block-card {% if block.index == 1 %}genesis{% endif %}">
+          <div class="block-top">
+            <span class="block-index {% if block.index == 1 %}genesis-tag{% endif %}">
+              Block #{{ block.index }}
+              {% if block.index == 1 %} — Genesis Block{% endif %}
+            </span>
+            <span class="block-time">{{ block.timestamp }}</span>
+          </div>
+          <div class="block-data">
+            <div class="data-label">DATA</div>
+            {{ block.data }}
+          </div>
+          <div class="hash-row">
+            <div class="hash-item">
+              <span class="hash-label">This Hash</span>
+              <span class="hash-value">{{ block.hash }}</span>
+            </div>
+            <div class="hash-item">
+              <span class="hash-label">Prev Hash</span>
+              <span class="hash-value prev">{{ block.previous_hash }}</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <span class="tamper-badge">Verified</span>
+          </div>
+        </div>
+        {% if not loop.last %}
+        <div class="block-connector"></div>
+        {% endif %}
+        {% endfor %}
       </div>
     </div>
 
@@ -357,7 +446,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 </div>
 
 <script>
-// ====== AUTH ======
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'admin123';
 
@@ -373,20 +461,228 @@ function doLogin() {
     setTimeout(() => err.style.display = 'none', 3000);
   }
 }
-
 function doLogout() {
+  stopCamera();
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('l-user').value = '';
   document.getElementById('l-pass').value = '';
 }
 
-// Enter key support
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
-});
+let stream = null, scanning = false, lastScan = '', lastScanTime = 0;
+let gAllowed = 0, gUsed = 0, gFake = 0;
+let scanAnimFrame = null;
 
-// ====== VERIFY via Flask /verify_qr ======
+// ── helpers ──────────────────────────────────────────────────────────────────
+function showCamErr(msg) {
+  const el = document.getElementById('cam-err-banner');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideCamErr() {
+  document.getElementById('cam-err-banner').classList.remove('show');
+}
+
+// ── camera ───────────────────────────────────────────────────────────────────
+async function startCamera() {
+  hideCamErr();
+  document.getElementById('cam-status').textContent = 'Starting...';
+
+  // ✅ FIX 1: Check HTTPS / secure context
+  if (!window.isSecureContext) {
+    showCamErr('⚠️ Camera needs HTTPS. Please serve the app over HTTPS or use localhost.');
+    document.getElementById('cam-status').textContent = 'Camera unavailable';
+    return;
+  }
+
+  // ✅ FIX 2: Check mediaDevices API exists
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showCamErr('⚠️ Camera API not supported in this browser. Try Chrome/Edge over HTTPS.');
+    document.getElementById('cam-status').textContent = 'Camera unavailable';
+    return;
+  }
+
+  try {
+    // ✅ FIX 3: Try environment camera first, fall back to any camera
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
+        audio: false
+      });
+    } catch (constraintErr) {
+      // Fallback: try without facingMode constraint
+      stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    }
+
+    const video = document.getElementById('gate-video');
+    video.srcObject = stream;
+
+    // ✅ FIX 4: Wait for video to be ready before scanning
+    await new Promise((resolve, reject) => {
+      video.onloadedmetadata = () => resolve();
+      video.onerror = (e) => reject(e);
+      setTimeout(reject, 8000, new Error('Video load timeout'));
+    });
+    await video.play();
+
+    scanning = true;
+    document.getElementById('btn-start').style.display = 'none';
+    document.getElementById('btn-stop').style.display = '';
+    document.getElementById('cam-status').textContent = 'Scanning...';
+
+    // ✅ FIX 5: Cancel any existing animation frame before starting new one
+    if (scanAnimFrame) cancelAnimationFrame(scanAnimFrame);
+    scanFrame();
+
+  } catch(e) {
+    stream = null;
+    scanning = false;
+    document.getElementById('cam-status').textContent = 'Camera unavailable';
+
+    // ✅ FIX 6: Friendly error messages per error type
+    let msg = '';
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      msg = '🚫 Camera permission denied. Browser settings-ல camera Allow பண்ணுங்க.';
+    } else if (e.name === 'NotFoundError') {
+      msg = '📷 No camera found on this device.';
+    } else if (e.name === 'NotReadableError') {
+      msg = '⚠️ Camera is used by another app. அதை close பண்ணி try பண்ணுங்க.';
+    } else {
+      msg = '⚠️ Camera error: ' + e.message;
+    }
+    showCamErr(msg);
+  }
+}
+
+function stopCamera() {
+  scanning = false;
+  if (scanAnimFrame) { cancelAnimationFrame(scanAnimFrame); scanAnimFrame = null; }
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  const video = document.getElementById('gate-video');
+  video.srcObject = null;
+  document.getElementById('btn-start').style.display = '';
+  document.getElementById('btn-stop').style.display = 'none';
+  document.getElementById('cam-status').textContent = 'Click "Start Camera" to begin';
+  hideCamErr();
+}
+
+function scanFrame() {
+  if (!scanning) return;
+  const video  = document.getElementById('gate-video');
+  const canvas = document.getElementById('gate-canvas');
+
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    // ✅ FIX 7: Check jsQR is loaded before calling it
+    if (typeof jsQR === 'undefined') {
+      document.getElementById('cam-status').textContent = 'jsQR not loaded yet...';
+      scanAnimFrame = requestAnimationFrame(scanFrame);
+      return;
+    }
+
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'dontInvert'
+    });
+
+    if (code && code.data) {
+      const now = Date.now();
+      // ✅ FIX 8: Debounce - same QR within 3s ignore cheyyum
+      if (code.data !== lastScan || now - lastScanTime > 3000) {
+        lastScan = code.data;
+        lastScanTime = now;
+        document.getElementById('cam-status').textContent = 'QR detected! Verifying...';
+        processGateScan(code.data);
+      }
+    }
+  }
+
+  scanAnimFrame = requestAnimationFrame(scanFrame);
+}
+
+// ── verify ───────────────────────────────────────────────────────────────────
+async function processGateScan(token) {
+  try {
+    const res = await fetch('/verify_qr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket: token })
+    });
+    const data = await res.json();
+    showGateResult(data.result, token.split('-')[0]);
+  } catch(e) {
+    showGateResult('Error', '?');
+  }
+  if (scanning) document.getElementById('cam-status').textContent = 'Scanning...';
+}
+
+async function gateManual() {
+  const val = document.getElementById('gate-manual').value.trim();
+  if (!val) return;
+  // ✅ FIX 9: If already has "-" (full token), use as-is; else append "-0"
+  const token = val.includes('-') ? val : val + '-0';
+  await processGateScan(token);
+  document.getElementById('gate-manual').value = '';
+}
+
+function showGateResult(result, ticketId) {
+  const box = document.getElementById('gate-result');
+  const time = new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  let emoji, status, color, cls, logCls;
+
+  if (result === 'Entry Allowed') {
+    emoji = '✅'; status = 'ENTRY ALLOWED'; color = 'var(--green)'; cls = 'allowed'; logCls = 'ok';
+    gAllowed++; document.getElementById('g-allowed').textContent = gAllowed;
+  } else if (result === 'Ticket Already Used') {
+    emoji = '⚠️'; status = 'ALREADY USED'; color = 'var(--yellow)'; cls = 'used'; logCls = 'warn';
+    gUsed++; document.getElementById('g-used').textContent = gUsed;
+  } else {
+    emoji = '❌'; status = 'FAKE / NOT FOUND'; color = 'var(--red)'; cls = 'fake'; logCls = 'err';
+    gFake++; document.getElementById('g-fake').textContent = gFake;
+  }
+
+  box.className = 'gate-result ' + cls;
+  box.innerHTML =
+    '<div class="gate-emoji">' + emoji + '</div>' +
+    '<div class="gate-status" style="color:' + color + '">' + status + '</div>' +
+    '<div class="gate-tid">Ticket #' + ticketId + ' · ' + time + '</div>';
+
+  // Add to log
+  const log = document.getElementById('scan-log-body');
+  const placeholder = log.querySelector('div[style*="text-align:center"]');
+  if (placeholder) log.innerHTML = '';
+  const item = document.createElement('div');
+  item.className = 'log-item ' + logCls;
+  item.innerHTML =
+    '<span class="mono" style="color:var(--accent)">#' + ticketId + '</span>' +
+    '<span style="flex:1">' + status + '</span>' +
+    '<span style="color:var(--muted)">' + time + '</span>';
+  log.insertBefore(item, log.firstChild);
+
+  // Auto-reset result box after 3s
+  setTimeout(() => {
+    box.className = 'gate-result idle';
+    box.innerHTML =
+      '<div class="gate-emoji">&#127915;</div>' +
+      '<div class="gate-status" style="color:var(--muted)">Waiting for scan...</div>' +
+      '<div class="gate-tid">Point camera at QR code</div>';
+  }, 3000);
+}
+
+function clearLog() {
+  document.getElementById('scan-log-body').innerHTML =
+    '<div style="color:var(--muted);font-family:var(--mono);font-size:12px;text-align:center;padding:10px">No scans yet</div>';
+  gAllowed = 0; gUsed = 0; gFake = 0;
+  document.getElementById('g-allowed').textContent = 0;
+  document.getElementById('g-used').textContent = 0;
+  document.getElementById('g-fake').textContent = 0;
+}
+
+// ── verify tab ───────────────────────────────────────────────────────────────
 async function doVerify() {
   const val = document.getElementById('v-input').value.trim();
   if (!val) return;
@@ -395,9 +691,7 @@ async function doVerify() {
   document.getElementById('v-icon').textContent = '⏳';
   document.getElementById('v-msg').innerHTML = 'Checking...';
   document.getElementById('v-detail').textContent = '';
-
   try {
-    // Build token like Flask expects: "id-timestamp" or just "id"
     const token = val.includes('-') ? val : val + '-0';
     const res = await fetch('/verify_qr', {
       method: 'POST',
@@ -405,20 +699,18 @@ async function doVerify() {
       body: JSON.stringify({ ticket: token })
     });
     const data = await res.json();
-    const result = data.result;
-
-    if (result === 'Entry Allowed') {
+    if (data.result === 'Entry Allowed') {
       document.getElementById('v-icon').textContent = '✅';
       document.getElementById('v-msg').innerHTML = '<span style="color:var(--green)">Entry Allowed!</span>';
-      document.getElementById('v-detail').textContent = `Ticket #${val} is valid.`;
-    } else if (result === 'Ticket Already Used') {
+      document.getElementById('v-detail').textContent = 'Ticket #' + val + ' is valid.';
+    } else if (data.result === 'Ticket Already Used') {
       document.getElementById('v-icon').textContent = '⚠️';
       document.getElementById('v-msg').innerHTML = '<span style="color:var(--yellow)">Already Used!</span>';
-      document.getElementById('v-detail').textContent = `Ticket #${val} was already scanned.`;
+      document.getElementById('v-detail').textContent = 'Ticket #' + val + ' was already scanned.';
     } else {
       document.getElementById('v-icon').textContent = '❌';
       document.getElementById('v-msg').innerHTML = '<span style="color:var(--red)">Fake / Not Found!</span>';
-      document.getElementById('v-detail').textContent = `Ticket #${val} does not exist.`;
+      document.getElementById('v-detail').textContent = 'Ticket #' + val + ' does not exist.';
     }
   } catch(e) {
     document.getElementById('v-icon').textContent = '⚠️';
@@ -427,15 +719,12 @@ async function doVerify() {
   }
 }
 
-// ====== NAV ======
-const SECS = ['overview','tickets','verify','fakes'];
+// ── navigation ───────────────────────────────────────────────────────────────
+const SECS = ['overview','tickets','entry','verify','fakes','blockchain'];
 function showSec(name) {
-  SECS.forEach(s => {
-    document.getElementById('sec-'+s).classList.toggle('active', s===name);
-  });
-  document.querySelectorAll('.nav-item').forEach((el,i) => {
-    el.classList.toggle('active', SECS[i]===name);
-  });
+  if (name !== 'entry') stopCamera();
+  SECS.forEach(s => document.getElementById('sec-' + s).classList.toggle('active', s === name));
+  document.querySelectorAll('.nav-item').forEach((el, i) => el.classList.toggle('active', SECS[i] === name));
 }
 </script>
 </body>
