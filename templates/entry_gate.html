@@ -101,7 +101,7 @@ body::before{
   <div class="header">
     <div class="header-badge"><div class="live-dot"></div>ENTRY GATE LIVE</div>
     <div class="header-title">ENTRY<br><span>GATE</span></div>
-    <div class="header-sub">TechFest 2025 · Dec 25, 2025 · Chennai</div>
+    <div class="header-sub">P³S Ignite Fest 2025 · jan 1, 2027 · Chennai</div>
   </div>
 
   <div class="stats-row">
@@ -136,10 +136,10 @@ body::before{
             <div class="c3"></div><div class="c4"></div>
           </div>
         </div>
-        <div class="scan-msg" id="scan-msg" style="display:none">QR Code-ஐ frame-ல வையுங்க</div>
+        <div class="scan-msg" id="scan-msg" style="display:none">Place the QR code inside the frame 📷</div>
         <div class="cam-placeholder" id="cam-placeholder">
           <div class="cam-placeholder-icon">📷</div>
-          <div class="cam-placeholder-text">Camera start பண்ண கீழே click பண்ணுங்க</div>
+          <div class="cam-placeholder-text">Click below to start the camera</div>
         </div>
       </div>
       <div class="cam-error" id="cam-error">
@@ -153,7 +153,7 @@ body::before{
   <div class="card">
     <div class="card-header"><div class="card-title">⌨️ Manual Ticket ID</div></div>
     <div class="card-body">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Ticket ID type பண்ணி verify பண்ணுங்க</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Type the Ticket ID and verify 🎟️</div>
       <div class="manual-row">
         <input class="inp" id="manual-inp" placeholder="e.g. 5-1234567890" onkeydown="if(event.key==='Enter')manualVerify()"/>
         <button class="btn-verify" onclick="manualVerify()">VERIFY</button>
@@ -178,7 +178,7 @@ body::before{
     &nbsp;·&nbsp;
     <a href="/admin" style="color:var(--muted);font-size:13px;text-decoration:none;">Admin →</a>
   </div>
-  <div class="footer">TechFest 2025 · Entry Gate · Powered by TicketSys</div>
+  <div class="footer">P³S Ignite Fest 2027 · Entry Gate · Powered by TicketSys</div>
 </div>
 
 <script>
@@ -284,10 +284,11 @@ async function startCamera() {
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
     btn.innerHTML = '📷 START CAMERA'; btn.className = 'btn-cam btn-start'; btn.disabled = false;
     const msgs = {
-      NotAllowedError:      '🚫 Permission denied. Browser-ல camera Allow பண்ணுங்க.',
-      PermissionDeniedError:'🚫 Permission denied. Browser-ல camera Allow பண்ணுங்க.',
-      NotFoundError:        '📷 Camera இல்ல இந்த device-ல.',
-      NotReadableError:     '⚠️ Camera வேற app use பண்றது. Close பண்ணி try பண்ணுங்க.',
+      NotAllowedError:      '🚫 Permission denied. Please allow camera access in the browser.',
+      
+      PermissionDeniedError:'🚫 Permission denied. Please allow camera access in the browser.',
+      NotFoundError:        '📷 No camera found on this device.',
+      NotReadableError:     '⚠️ The camera is being used by another app. Close it and try again.',
     };
     showCamError(msgs[e.name] || '⚠️ Camera error: ' + e.message);
   }
@@ -365,7 +366,7 @@ function showLoading(token) {
   document.getElementById('r-icon').textContent   = '⏳';
   document.getElementById('r-title').textContent  = 'CHECKING...';
   document.getElementById('r-title').className    = 'r-title blue';
-  document.getElementById('r-detail').textContent = 'Server-ல verify பண்றோம்...';
+  document.getElementById('r-detail').textContent = 'we are verifying it on the Server';
   document.getElementById('r-tid').style.display  = 'none';
   box.scrollIntoView({ behavior:'smooth', block:'center' });
 }
@@ -381,7 +382,7 @@ function handleResult(result, token) {
     document.getElementById('r-icon').textContent   = '✅';
     document.getElementById('r-title').textContent  = 'ENTRY ALLOWED!';
     document.getElementById('r-title').className    = 'r-title green';
-    document.getElementById('r-detail').textContent = 'Ticket valid! Entry கொடுங்க 🎉';
+    document.getElementById('r-detail').textContent = 'Ticket valid! Entry allowed 🎉';
     counts.allowed++;
     addLog(token, 'green', 'Entry Allowed', now);
   } else if (result === 'Ticket Already Used') {
@@ -389,7 +390,7 @@ function handleResult(result, token) {
     document.getElementById('r-icon').textContent   = '⚠️';
     document.getElementById('r-title').textContent  = 'ALREADY USED!';
     document.getElementById('r-title').className    = 'r-title yellow';
-    document.getElementById('r-detail').textContent = 'இந்த ticket already use ஆகிடுச்சு. Entry வேண்டாம்!';
+    document.getElementById('r-detail').textContent = 'This ticket has already been used. Entry not allowed!';
     counts.used++;
     addLog(token, 'yellow', 'Already Used', now);
   } else if (result === 'Fake Ticket') {
@@ -397,7 +398,7 @@ function handleResult(result, token) {
     document.getElementById('r-icon').textContent   = '❌';
     document.getElementById('r-title').textContent  = 'FAKE TICKET!';
     document.getElementById('r-title').className    = 'r-title red';
-    document.getElementById('r-detail').textContent = 'இந்த ticket system-ல இல்ல. Entry வேண்டாம்!';
+    document.getElementById('r-detail').textContent = 'This ticket is not in the system. Entry not allowed!';
     counts.fake++;
     addLog(token, 'red', 'Fake Ticket', now);
   } else {
@@ -405,7 +406,7 @@ function handleResult(result, token) {
     document.getElementById('r-icon').textContent   = '⚠️';
     document.getElementById('r-title').textContent  = 'ERROR';
     document.getElementById('r-title').className    = 'r-title yellow';
-    document.getElementById('r-detail').textContent = 'Something went wrong. Again try பண்ணுங்க.';
+    document.getElementById('r-detail').textContent = 'Something went wrong. Again try .';
     addLog(token, 'yellow', 'Error', now);
   }
   updateStats();

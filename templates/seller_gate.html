@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Seller Gate — TechFest 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0d0d0d; --surface:#1a1a1a; --border:#2a2a2a;
+  --accent:#e8401c; --green:#1a8a4a;
+  --ink:#fff; --muted:#888;
+  --font-display:'Bebas Neue',cursive; --font-body:'Outfit',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:var(--font-body);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.header{text-align:center;margin-bottom:24px;}
+.header .icon{font-size:44px;margin-bottom:8px;}
+.header h1{font-family:var(--font-display);font-size:26px;letter-spacing:2px;}
+.header p{font-size:12px;color:var(--muted);margin-top:4px;}
+.step{display:none;}
+.step.active{display:block;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.field input{width:100%;padding:14px 16px;background:#111;border:1.5px solid var(--border);border-radius:10px;color:#fff;font-family:var(--font-body);font-size:16px;outline:none;transition:border-color 0.2s;}
+.field input:focus{border-color:var(--accent);}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-family:var(--font-display);font-size:19px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;margin-top:8px;}
+.btn-red{background:var(--accent);color:#fff;}
+.btn-red:hover{background:#c93516;}
+.btn-dark{background:#333;color:#fff;}
+.cam-wrap{position:relative;width:100%;border-radius:14px;overflow:hidden;background:#000;margin-bottom:14px;}
+video{width:100%;display:block;border-radius:14px;}
+canvas#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.status-box{text-align:center;padding:12px;border-radius:10px;font-size:14px;font-weight:600;margin-bottom:12px;}
+.status-box.info{background:#1a1a2e;border:1px solid #4a4aff;color:#7a7aff;}
+.status-box.success{background:#0a2a1a;border:1px solid var(--green);color:var(--green);}
+.status-box.error{background:#2a0a0a;border:1px solid var(--accent);color:var(--accent);}
+.result-card{border-radius:14px;padding:24px;text-align:center;margin-bottom:12px;}
+.result-card.success{background:#0a2a1a;border:2px solid var(--green);}
+.result-card.blocked{background:#2a0a0a;border:2px solid var(--accent);}
+.result-icon{font-size:52px;margin-bottom:10px;}
+.result-title{font-family:var(--font-display);font-size:24px;letter-spacing:1px;margin-bottom:8px;}
+.result-detail{font-size:13px;color:var(--muted);line-height:1.6;}
+.result-ticket{background:#111;border:1px solid var(--border);border-radius:10px;padding:14px;margin:14px 0;text-align:left;}
+.result-ticket .row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);}
+.result-ticket .row:last-child{border-bottom:none;}
+.lbl{color:var(--muted);}
+.val{font-weight:600;}
+.info-box{background:#111;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:18px;font-size:13px;color:var(--muted);line-height:1.7;}
+.info-box strong{color:var(--ink);}
+.back-btn{background:transparent;border:none;color:var(--muted);font-family:var(--font-body);font-size:13px;cursor:pointer;margin-bottom:16px;padding:0;}
+.back-btn:hover{color:#fff;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="icon">🎫</div>
+    <h1>SELLER GATE</h1>
+    <p>Staff only — Face verification · One Person One Ticket</p>
+  </div>
+
+  <!-- STEP 1: Phone + Name -->
+  <div class="step active" id="step1">
+    <div class="info-box">
+      <strong>One Person = One Ticket</strong><br>
+      Enter buyer details — face will be scanned to prevent duplicates.
+    </div>
+    <div class="field">
+      <label>Buyer's Phone Number *</label>
+      <input type="tel" id="phoneInput" placeholder="9876543210" maxlength="10"/>
+    </div>
+    <div class="field">
+      <label>Buyer's Name *</label>
+      <input type="text" id="nameInput" placeholder="Enter buyer name"/>
+    </div>
+    <button class="btn btn-red" onclick="checkPhone()">CHECK → CONTINUE</button>
+    <div id="phoneError" style="color:#e8401c;font-size:13px;margin-top:10px;display:none;"></div>
+  </div>
+
+  <!-- STEP 2: Face Scan -->
+  <div class="step" id="step2">
+    <button class="back-btn" onclick="goStep(1);stopCam()">← Back</button>
+    <div class="status-box info" id="camStatus">📷 Position face clearly in camera...</div>
+    <div class="cam-wrap">
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay"></canvas>
+    </div>
+    <button class="btn btn-red" id="captureBtn" onclick="captureAndVerify()">📸 CAPTURE & VERIFY FACE</button>
+    <canvas id="snapCanvas" style="display:none"></canvas>
+  </div>
+
+  <!-- STEP 3: Result -->
+  <div class="step" id="step3">
+    <div id="resultContent"></div>
+    <button class="btn btn-dark" onclick="resetAll()" style="margin-top:12px;">← NEW BUYER</button>
+  </div>
+</div>
+
+<script>
+let currentPhone = "";
+let currentName  = "";
+let videoStream  = null;
+
+async function checkPhone() {
+  const phone = document.getElementById("phoneInput").value.trim();
+  const name  = document.getElementById("nameInput").value.trim();
+  const errEl = document.getElementById("phoneError");
+
+  if (phone.length < 10) { errEl.textContent="Enter valid 10-digit number!"; errEl.style.display="block"; return; }
+  if (!name)              { errEl.textContent="Enter buyer name!";            errEl.style.display="block"; return; }
+  errEl.style.display = "none";
+  currentPhone = phone;
+  currentName  = name;
+
+  try {
+    const res  = await fetch("/check_phone", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({phone})
+    });
+    const data = await res.json();
+    if (data.has_ticket) { goStep(3); showBlocked(data); }
+    else                  { goStep(2); startCam(); }
+  } catch(e) {
+    errEl.textContent = "Server error: " + e.message;
+    errEl.style.display = "block";
+  }
+}
+
+async function startCam() {
+  try {
+    videoStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:400,height:320}});
+    const video = document.getElementById("video");
+    video.srcObject = videoStream;
+    document.getElementById("camStatus").className = "status-box success";
+    document.getElementById("camStatus").textContent = "✅ Camera ready — please keep your face in the center";
+  } catch(e) {
+    document.getElementById("camStatus").className = "status-box error";
+    document.getElementById("camStatus").textContent = "❌ Camera access denied!";
+  }
+}
+
+async function captureAndVerify() {
+  const video  = document.getElementById("video");
+  const canvas = document.getElementById("snapCanvas");
+  const status = document.getElementById("camStatus");
+
+  status.className = "status-box info";
+  status.textContent = "⏳ Capturing & verifying face...";
+  document.getElementById("captureBtn").disabled = true;
+
+  // Capture frame
+  canvas.width  = video.videoWidth  || 400;
+  canvas.height = video.videoHeight || 320;
+  canvas.getContext("2d").drawImage(video, 0, 0);
+
+  const imageData = canvas.toDataURL("image/jpeg", 0.8);
+
+  try {
+    const res  = await fetch("/verify_face", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({phone: currentPhone, name: currentName, image: imageData})
+    });
+    const data = await res.json();
+    stopCam();
+    goStep(3);
+    if (data.status === "duplicate") showFaceDuplicate(data);
+    else if (data.status === "issued") showSuccess(data);
+    else showError(data.message || "Unknown error");
+  } catch(e) {
+    status.className = "status-box error";
+    status.textContent = "❌ Error: " + e.message;
+    document.getElementById("captureBtn").disabled = false;
+  }
+}
+
+function stopCam() {
+  if (videoStream) { videoStream.getTracks().forEach(t=>t.stop()); videoStream=null; }
+}
+
+function showSuccess(data) {
+  document.getElementById("resultContent").innerHTML = `
+    <div class="result-card success">
+      <div class="result-icon">✅</div>
+      <div class="result-title" style="color:#1a8a4a;">TICKET ISSUED!</div>
+      <div class="result-detail">Face verified — New buyer confirmed!</div>
+      <div class="result-ticket">
+        <div class="row"><span class="lbl">Ticket ID</span><span class="val">#${data.ticket_id}</span></div>
+        <div class="row"><span class="lbl">Name</span><span class="val">${data.name}</span></div>
+        <div class="row"><span class="lbl">Phone</span><span class="val">${data.phone}</span></div>
+        <div class="row"><span class="lbl">Status</span><span class="val" style="color:#1a8a4a;">✅ Valid</span></div>
+      </div>
+    </div>`;
+}
+
+function showFaceDuplicate(data) {
+  document.getElementById("resultContent").innerHTML = `
+    <div class="result-card blocked">
+      <div class="result-icon">🚫</div>
+      <div class="result-title" style="color:#e8401c;">FACE ALREADY REGISTERED!</div>
+      <div class="result-detail">this person already has a ticket!<br>One person = One ticket only!</div>
+      <div class="result-ticket">
+        <div class="row"><span class="lbl">Matched Ticket</span><span class="val">#${data.ticket_id}</span></div>
+        <div class="row"><span class="lbl">Status</span><span class="val" style="color:#e8401c;">❌ Blocked</span></div>
+      </div>
+    </div>`;
+}
+
+function showBlocked(data) {
+  document.getElementById("resultContent").innerHTML = `
+    <div class="result-card blocked">
+      <div class="result-icon">🚫</div>
+      <div class="result-title" style="color:#e8401c;">ALREADY HAS TICKET!</div>
+      <div class="result-detail">this phone number already has a ticket!</div>
+      <div class="result-ticket">
+        <div class="row"><span class="lbl">Phone</span><span class="val">${data.phone}</span></div>
+        <div class="row"><span class="lbl">Ticket ID</span><span class="val">#${data.ticket_id}</span></div>
+        <div class="row"><span class="lbl">Status</span><span class="val" style="color:#e8401c;">❌ Blocked</span></div>
+      </div>
+    </div>`;
+}
+
+function showError(msg) {
+  document.getElementById("resultContent").innerHTML = `
+    <div class="result-card blocked">
+      <div class="result-icon">❌</div>
+      <div class="result-title">ERROR</div>
+      <div class="result-detail">${msg}</div>
+    </div>`;
+}
+
+function goStep(n) {
+  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+  document.getElementById("step"+n).classList.add("active");
+}
+
+function resetAll() {
+  stopCam();
+  currentPhone = ""; currentName = "";
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("nameInput").value  = "";
+  document.getElementById("captureBtn").disabled = false;
+  document.getElementById("camStatus").className = "status-box info";
+  document.getElementById("camStatus").textContent = "📷 Position face clearly in camera...";
+  goStep(1);
+}
+</script>
+</body>
+</html>

@@ -158,16 +158,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   <div class="header">
     <div class="header-icon">🤝</div>
     <div class="header-title">BUY FROM<br><span>SELLER</span></div>
-    <div class="header-sub">Seller-கிட்ட வாங்குறதுக்கு முன்னாடி QR scan பண்ணுங்க</div>
+    <div class="header-sub">How to use?</div>
   </div>
 
   <!-- TIPS -->
   <div class="tips">
     <div class="tips-title">📋 எப்படி use பண்றது?</div>
-    <div class="tip"><span class="tip-icon">1️⃣</span><span>Seller-கிட்ட ticket QR காட்டச் சொல்லுங்க</span></div>
-    <div class="tip"><span class="tip-icon">2️⃣</span><span>கீழே உள்ள camera-ல அந்த QR scan பண்ணுங்க</span></div>
-    <div class="tip"><span class="tip-icon">✅</span><span><strong style="color:var(--green)">ORIGINAL</strong> வந்தா — Safe to buy!</span></div>
-    <div class="tip"><span class="tip-icon">❌</span><span><strong style="color:var(--red)">FAKE / SOLD</strong> வந்தா — வாங்காதீங்க!</span></div>
+    <div class="tip"><span class="tip-icon">1️⃣</span><span>Ask the seller to show the ticket QR code</span></div>
+    <div class="tip"><span class="tip-icon">2️⃣</span><span>scan that QR using the camera below</span></div>
+    <div class="tip"><span class="tip-icon">✅</span><span><strong style="color:var(--green)">ORIGINAL</strong> valid Ticket!</span></div>
+    <div class="tip"><span class="tip-icon">❌</span><span><strong style="color:var(--red)">FAKE / SOLD</strong> Fake or already sold ticket!</span></div>
   </div>
 
   <!-- RESULT BOX (shown after scan) -->
@@ -176,7 +176,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <div class="r-title" id="r-title"></div>
     <div class="r-detail" id="r-detail"></div>
     <div class="r-info" id="r-info" style="display:none"></div>
-    <button class="btn-reset" onclick="resetScanner()">🔄 Again Scan பண்ணு</button>
+    <button class="btn-reset" onclick="resetScanner()">🔄 Again Scan </button>
   </div>
 
   <!-- SCANNER CARD -->
@@ -193,11 +193,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <div class="scan-line"></div>
           </div>
         </div>
-        <div class="scanner-msg" id="scanner-msg" style="display:none">QR Code-ஐ frame-ல வையுங்க</div>
+        <div class="scanner-msg" id="scanner-msg" style="display:none">place the QR code inside the frame</div>
         <!-- Placeholder when camera off -->
         <div id="cam-placeholder" style="text-align:center;padding:40px 20px;">
           <div style="font-size:48px;margin-bottom:12px;">📷</div>
-          <div style="font-size:14px;color:var(--muted)">Camera start பண்ண கீழே click பண்ணுங்க</div>
+          <div style="font-size:14px;color:var(--muted)">click below to start the camera</div>
         </div>
       </div>
       <button class="btn-scan btn-start" id="btn-cam" onclick="toggleCamera()">📷 CAMERA START</button>
@@ -208,10 +208,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   <div class="card">
     <div class="card-header">
       <span>⌨️</span>
-      <div class="card-title">Manual Ticket ID Enter பண்ணுங்க</div>
+      <div class="card-title">Enter Manual Ticket ID </div>
     </div>
     <div class="card-body">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">QR scan முடியலன்னா ticket number type பண்ணுங்க</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">If QR scan fails, enter the ticket number</div>
       <div class="manual-row">
         <input class="inp" id="manual-input" placeholder="e.g. 5-1234567890" onkeydown="if(event.key==='Enter')manualVerify()"/>
         <button class="btn-verify" onclick="manualVerify()">VERIFY</button>
@@ -265,7 +265,7 @@ async function startCamera() {
   } catch(e) {
     btn.innerHTML = '📷 CAMERA START';
     btn.disabled = false;
-    alert('Camera access இல்ல! Browser-ல permission allow பண்ணுங்க.\n\nError: ' + e.message);
+    alert('camera access not available! please allow camera permission in the browser.\n\nError: ' + e.message);
   }
 }
 
@@ -331,7 +331,7 @@ async function sendToBackend(token) {
     const data = await res.json();
     showResult(data);
   } catch(e) {
-    showResult({ status:'error', result:'Network Error', detail: 'Server-ஐ reach பண்ண முடியல. Try again!' });
+    showResult({ status:'error', result:'Network Error', detail: 'unable to reach the Server. Try again!' });
   }
 }
 
@@ -341,7 +341,7 @@ function showLoading() {
   document.getElementById('r-icon').textContent = '⏳';
   document.getElementById('r-title').textContent = 'Checking...';
   document.getElementById('r-title').className = 'r-title yellow';
-  document.getElementById('r-detail').textContent = 'Server-ல verify பண்றோம்...';
+  document.getElementById('r-detail').textContent = ' verifying on the server...';
   document.getElementById('r-info').style.display = 'none';
 }
 
@@ -367,7 +367,7 @@ function showResult(data) {
       icon.textContent  = '✅';
       title.textContent = 'ORIGINAL TICKET';
       title.className   = 'r-title green';
-      detail.textContent = 'இந்த ticket original! Safe to buy. 👍';
+      detail.textContent = 'ticket original! Safe to buy. 👍';
       if (data.ticket_id) {
         info.style.display = 'block';
         info.innerHTML = `
@@ -383,7 +383,7 @@ function showResult(data) {
       icon.textContent  = '🚫';
       title.textContent = 'ALREADY SOLD!';
       title.className   = 'r-title red';
-      detail.textContent = 'இந்த ticket ஏற்கனவே யாரோட கிட்ட இருக்கு. வாங்காதீங்க! ❌';
+      detail.textContent = 'This ticket already belongs to someone else. Do not buy it.! ❌';
       if (data.ticket_id) {
         info.style.display = 'block';
         info.innerHTML = `
@@ -399,7 +399,7 @@ function showResult(data) {
       icon.textContent  = '⚠️';
       title.textContent = 'ALREADY USED!';
       title.className   = 'r-title yellow';
-      detail.textContent = 'இந்த ticket entry gate-ல already use ஆகிடுச்சு. வாங்காதீங்க!';
+      detail.textContent = 'This ticket has already been used at the entry gate. Do not buy it.!';
       break;
 
     case 'fake':
@@ -407,7 +407,7 @@ function showResult(data) {
       icon.textContent  = '❌';
       title.textContent = 'FAKE TICKET!';
       title.className   = 'r-title red';
-      detail.textContent = data.detail || 'இந்த ticket system-ல இல்ல. நம்பாதீங்க!';
+      detail.textContent = data.detail || 'This ticket is not in the system. Do not trust it.!';
       break;
 
     default:
